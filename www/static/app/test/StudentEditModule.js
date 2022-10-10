@@ -63,4 +63,5 @@ define([
               alert("确认删除"+fileInfo.name+"吗？");
           }
       })
+    /*11111111*/
 })
