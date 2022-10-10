@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+		<meta http-equiv="X-UA-Compatible"content="IE=9; IE=8; IE=7; IE=EDGE">
+    <meta charset="UTF-8"/>
+    <title></title>
+    <link href="../../../css/controls.css" rel="stylesheet" type="text/css">
+    <link href="../../../css/viewer.css" rel="stylesheet" type="text/css">
+    <link href="../../../css/page.css" rel="stylesheet" type="text/css">
+
+    <style>
+        [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+            display: none !important;
+        }
+    </style>
+    <script type="text/javascript">
+        window.ctx=""
+    </script>
+    <script src="../../../../bower_components/requirejs/require.js" data-main="../../../../static/app.js" data-bootstrap-modules="'framework/imageViewer/GillionImageViewerModule'"></script>
+</head>
+<body ng-controller="ImageViewerController" ng-cloak ng-init="load()">
+    <div class="viewer-images">
+            <button class="btn viewer-images-btn-close" ng-click="closeViewer()">关闭</button>
+            <button class="btn viewer-content-btn-prev" ng-click="prev()">
+                <i class="fi fi-arrow-left"></i>
+            </button>
+            <button class="btn viewer-content-btn-next" ng-click="next()" >
+                <i class="fi fi-arrow-right"></i>
+            </button>
+            <div class="viewer-images-content">
+                <img id="pic_1" ng-src="{{fileInfo.orginalPath}}" class="viewer-images-current viewer-images-magnifying" />
+            </div>
+            <div class="viewer-images-operate-mask">
+            </div>
+            <div class="viewer-images-operate" mode="expand">
+                <button class="btn" ng-click="magnifying()">
+                    <i class="fi fi-magnifying"></i>
+                </button>
+                <button class="btn" ng-click="rotateRight()">
+                    <i class="fi fi-rotate-right"></i>
+                </button>
+                <button class="btn" ng-click="rotateLeft()">
+                    <i class="fi fi-rotate-left"></i>
+                </button>
+                <button class="btn" ng-click="download()">
+                    <i class="fi fi-download"></i>
+                </button>
+                <button class="btn viewer-images-operate-btn-expand" ng-click="expand()">
+                    <i class="fi fi-smallarrow-down"></i>
+                    展开缩略图
+                </button>
+            </div>
+            <div class="viewer-images-list" style="display: none" ng-click="activeImg($event)">
+                <img ng-repeat="(index, uploadFile) in uploadFiles" data-index="{{index}}" ng-src="{{uploadFile.fileInfo.smallThumbPath || uploadFile.fileInfo.orginalPath}}"
+                     ng-class="{'current': uploadFile.fileMarker== fileMarker}" />
+            </div>
+        </div>
+    </div>
+</body>
+</html>

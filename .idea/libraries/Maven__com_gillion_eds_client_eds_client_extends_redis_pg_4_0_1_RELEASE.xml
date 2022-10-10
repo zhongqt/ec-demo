@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.gillion.eds.client:eds-client-extends-redis:pg:4.0.1.RELEASE">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/gillion/eds/client/eds-client-extends-redis/4.0.1.RELEASE/eds-client-extends-redis-4.0.1.RELEASE-pg.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/gillion/eds/client/eds-client-extends-redis/4.0.1.RELEASE/eds-client-extends-redis-4.0.1.RELEASE-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/gillion/eds/client/eds-client-extends-redis/4.0.1.RELEASE/eds-client-extends-redis-4.0.1.RELEASE-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

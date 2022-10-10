@@ -1,0 +1,980 @@
+<!DOCTYPE html><html><head><title>上传控件</title><meta charset='utf-8'><link href='./marxico.css' rel='stylesheet'></head><body><div id='preview-contents' class='note-content'>
+                        <div id="wmd-preview" class="preview-content"></div>
+                    <div id="wmd-preview-section-1" class="wmd-preview-section preview-content">
+
+</div><div id="wmd-preview-section-2" class="wmd-preview-section preview-content">
+
+<h1 id="上传控件">上传控件</h1>
+
+<div><div class="toc"><div class="toc">
+<ul>
+<li><a href="#上传控件">上传控件</a><ul>
+<li><a href="#1-上传控件后台">1. 上传控件后台</a><ul>
+<li><a href="#11-fastdfs配置">1.1 FastDFS配置</a></li>
+<li><a href="#12-上传配置信息配置">1.2 上传配置信息配置</a></li>
+<li><a href="#13-上传后台配置">1.3 上传后台配置</a></li>
+<li><a href="#14-编写上传控件必须服务类">1.4 编写上传控件必须服务类</a></li>
+<li><a href="#15-编写示例业务配置">1.5 编写示例业务配置</a></li>
+</ul>
+</li>
+<li><a href="#2-上传控件前端配置">2. 上传控件前端配置</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+</div><div id="wmd-preview-section-3" class="wmd-preview-section preview-content">
+
+<h2 id="1-上传控件后台">1. 上传控件后台</h2>
+
+<p>上传控件使用了FastDfs作为文件存储服务器来进行存储，在使用上传控件时需对上传空间进行配置。 <br>
+以下介绍几个概念</p>
+
+<ul><li>文件服务器组：用于控制文件上传到哪个文件服务器中</li>
+<li>文件服务器：服务器组内的一系列服务器</li>
+<li>文件服务访问IP与端口：FastDFS可与nginx结合，上传后，根据配置路径，可直接通过nginx下载文件内容</li>
+</ul>
+
+<p>下面是FastDfs简单配置流程说明。</p>
+
+</div><div id="wmd-preview-section-4" class="wmd-preview-section preview-content">
+
+<h3 id="11-fastdfs配置">1.1 FastDFS配置</h3>
+
+<p>FastDFS的分组信息与服务端信息可在数据库中进行配置维护，或直接使用代码将配置信息写入，下面介绍使用数据库配置方式来进行配置。</p>
+
+<p>现有以下二张表： <br>
+    <strong>FAST_DFS_GROUP</strong>与<strong>TRACKER_SERVER</strong> <br>
+    内容如下：</p>
+
+<p><strong>FAST_DFS_GROUP</strong>:</p>
+
+<table>
+<thead>
+<tr>
+  <th align="left">列名</th>
+  <th align="left">字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="left">id</td>
+  <td align="left">主键</td>
+</tr>
+<tr>
+  <td align="left">group_name</td>
+  <td align="left">分组名称</td>
+</tr>
+<tr>
+  <td align="left">connect_timeout</td>
+  <td align="left">连接超时时间</td>
+</tr>
+<tr>
+  <td align="left">network_timout</td>
+  <td align="left">网络超时时间</td>
+</tr>
+<tr>
+  <td align="left">charset</td>
+  <td align="left">编码</td>
+</tr>
+<tr>
+  <td align="left">tracker_http_address</td>
+  <td align="left">通过nginx访问的IP地址</td>
+</tr>
+<tr>
+  <td align="left">anti_streal_token</td>
+  <td align="left">暂时不需要配置</td>
+</tr>
+<tr>
+  <td align="left">tracker_http_port</td>
+  <td align="left">通过nginx访问的端口号</td>
+</tr>
+<tr>
+  <td align="left">secret_key</td>
+  <td align="left">密钥</td>
+</tr>
+</tbody></table>
+
+
+<p><strong>TRACKER_SERVER</strong></p>
+
+<table>
+<thead>
+<tr>
+  <th align="left">列名</th>
+  <th align="left">字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="left">id</td>
+  <td align="left">主键</td>
+</tr>
+<tr>
+  <td align="left">group_id</td>
+  <td align="left">分组id，一个分组里可能会有多个tracker</td>
+</tr>
+<tr>
+  <td align="left">tracker_server</td>
+  <td align="left">FastDFS服务器地址</td>
+</tr>
+</tbody></table>
+
+
+<p>文件服务器的信息应在服务器启动时，自动载入。以下给出一个简单载入实例：</p>
+
+<p>1.在Spring中注入文件组容器</p>
+
+</div><div id="wmd-preview-section-5" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-xml hljs">    <span class="hljs-tag">&lt;<span class="hljs-title">bean</span> <span class="hljs-attribute">name</span>=<span class="hljs-value">"clientGroupContainer"</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"com.gillion.fdfs.group.ClientGroupContainer"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-title">bean</span></span></code></pre>
+
+<p>2.编写初始化类<strong>FastDfsGroupService</strong>与<strong>FastDfsGroupServiceImpl</strong></p>
+
+<p><strong>FastDfsGroupService</strong>:</p>
+
+</div><div id="wmd-preview-section-6" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-java hljs"><span class="hljs-keyword">package</span> com.gillion.sebusiness.demo.service.upload;
+
+<span class="hljs-keyword">import</span> com.gfa4j.mybatis.service.BaseService;
+
+<span class="hljs-javadoc">/**
+ * Created by wengms on 2015/7/30.
+ */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span>  <span class="hljs-title">FastDfsGroupService</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">BaseService</span></span>{
+}</code></pre>
+
+<p><strong>FastDfsGroupServiceImpl</strong></p>
+
+</div><div id="wmd-preview-section-7" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-java hljs"><span class="hljs-keyword">package</span> com.gillion.sebusiness.demo.service.upload.impl;
+
+<span class="hljs-keyword">import</span> com.gfa4j.mybatis.mapper.BaseMapper;
+<span class="hljs-keyword">import</span> com.gfa4j.mybatis.service.impl.BaseServiceImpl;
+<span class="hljs-keyword">import</span> com.gillion.fdfs.client.GroupFastDFSClient;
+<span class="hljs-keyword">import</span> com.gillion.fdfs.group.ClientGroup;
+<span class="hljs-keyword">import</span> com.gillion.fdfs.group.ClientGroupContainer;
+<span class="hljs-keyword">import</span> com.gillion.sebusiness.demo.service.upload.FastDfsGroupService;
+
+<span class="hljs-keyword">import</span> com.gillion.sebusiness.upload.mapper.FastDfsGroupMapper;
+<span class="hljs-keyword">import</span> com.gillion.sebusiness.upload.mapper.TrackerServerMapper;
+<span class="hljs-keyword">import</span> com.gillion.sebusiness.upload.model.FastDfsGroup;
+<span class="hljs-keyword">import</span> com.gillion.sebusiness.upload.model.TrackerServer;
+<span class="hljs-keyword">import</span> com.gillion.sebusiness.upload.model.TrackerServerExample;
+<span class="hljs-keyword">import</span> com.google.common.base.Function;
+<span class="hljs-keyword">import</span> com.google.common.collect.Lists;
+<span class="hljs-keyword">import</span> org.springframework.beans.factory.InitializingBean;
+<span class="hljs-keyword">import</span> org.springframework.beans.factory.annotation.Autowired;
+<span class="hljs-keyword">import</span> org.springframework.stereotype.Service;
+
+<span class="hljs-keyword">import</span> javax.annotation.Nullable;
+<span class="hljs-keyword">import</span> java.awt.*;
+<span class="hljs-keyword">import</span> java.util.List;
+<span class="hljs-keyword">import</span> java.util.stream.Collector;
+<span class="hljs-keyword">import</span> java.util.stream.Collectors;
+
+<span class="hljs-javadoc">/**
+ * Created by wengms on 2015/7/30.
+ */</span>
+<span class="hljs-annotation">@Service</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FastDfsGroupServiceImpl</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">BaseServiceImpl</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">FastDfsGroupService</span>,<span class="hljs-title">InitializingBean</span></span>{
+
+    <span class="hljs-annotation">@Autowired</span>
+    <span class="hljs-keyword">private</span> FastDfsGroupMapper fastDfsGroupMapper;
+
+    <span class="hljs-annotation">@Autowired</span>
+    <span class="hljs-keyword">private</span> TrackerServerMapper trackerServerMapper;
+
+    <span class="hljs-annotation">@Autowired</span>
+    <span class="hljs-keyword">private</span> ClientGroupContainer clientGroupContainer;
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> BaseMapper <span class="hljs-title">getMapper</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> fastDfsGroupMapper;
+    }
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">afterPropertiesSet</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception </span>{
+        List&lt;FastDfsGroup&gt; groups = <span class="hljs-keyword">this</span>.selectByExample(<span class="hljs-keyword">null</span>);
+        groups.stream().forEach(input -&gt; {
+            ClientGroup clientGroup = <span class="hljs-keyword">new</span> ClientGroup();
+            clientGroup.setAntiStrealToken(input.getAntiStrealToken());
+            clientGroup.setCharset(input.getCharset());
+            clientGroup.setConnectTimeout(input.getConnectTimeout());
+            clientGroup.setGroupName(input.getGroupName());
+            clientGroup.setNetworkTimeout(input.getNetworkTimeout());
+            clientGroup.setSecretKey(input.getSecretKey());
+            clientGroup.setTrackerHttpAddress(input.getTrackerHttpAddress());
+            clientGroup.setTrackerHttpPort(input.getTrackerHttpPort());
+            TrackerServerExample trackerServerExample = <span class="hljs-keyword">new</span> TrackerServerExample();
+            trackerServerExample.createCriteria().andGroupIdEqualTo(input.getId());
+            List&lt;TrackerServer&gt; trackerServers = trackerServerMapper.selectByExample(trackerServerExample);
+            List&lt;String&gt; trackerAddress = trackerServers.stream().map(trackerServer-&gt;trackerServer.getTrackerServer()).collect(Collectors.toList());
+            clientGroup.setTrackerServerAddresses(trackerAddress);
+            GroupFastDFSClient client = <span class="hljs-keyword">new</span> GroupFastDFSClient();
+            client.initGroup(clientGroup);
+            clientGroupContainer.addGroup(clientGroup);
+        });
+    }
+}</code></pre>
+
+<p>按照以上的配置，就完成了FastDFS组的初始化。</p>
+
+</div><div id="wmd-preview-section-8" class="wmd-preview-section preview-content">
+
+<h3 id="12-上传配置信息配置">1.2 上传配置信息配置</h3>
+
+<p>上传控件的使用流程是通过发送一个key到服务器端获取上传控件的类型限制，大小限制等配置信息等，主要包括以下功能配置：</p>
+
+<ol><li>上传类型：文件或图片</li>
+<li>限制类型：以文件后缀名作区分，多个类型之间以逗号分隔</li>
+<li>限制数量：一次上传的限制数量</li>
+<li>限制大小：对上传文件的大小进行限制</li>
+<li>FastDFS分组信息：指定文件在上次时，使用哪个文件服务器分组进行保存</li>
+<li>压缩策略：如果是图片，需要进行怎样的压缩，目前分为大缩略图和小缩略图，大小自己在配置中指定</li>
+<li>删除策略：物理删除或逻辑删除，物理删除会去文件服务器上将文件擦出，逻辑删除不删除物理文件，只删除数据库里保存的文件路径信息</li>
+<li>删除引用表达式：使用SpringEL表达式，直接指定某个bean的某个方法进行调用</li>
+</ol>
+
+<p>下面给个示例表： <br>
+<strong>UPLOAD_INFO</strong></p>
+
+<table>
+<thead>
+<tr>
+  <th align="left">字段名</th>
+  <th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="left">id</td>
+  <td align="left">主键,也作为key，在前端配置时使用</td>
+</tr>
+<tr>
+  <td align="left">upload_type</td>
+  <td align="left">上传类型</td>
+</tr>
+<tr>
+  <td align="left">limit_type</td>
+  <td align="left">限制类型</td>
+</tr>
+<tr>
+  <td align="left">limit_count</td>
+  <td align="left">限制数量</td>
+</tr>
+<tr>
+  <td align="left">limit_size</td>
+  <td align="left">限制大小</td>
+</tr>
+<tr>
+  <td align="left">dfs_group</td>
+  <td align="left">文件服务器分组名</td>
+</tr>
+<tr>
+  <td align="left">compress_strategy</td>
+  <td align="left">压缩策略</td>
+</tr>
+<tr>
+  <td align="left">delete_strategy</td>
+  <td align="left">删除策略</td>
+</tr>
+<tr>
+  <td align="left">delete_sexpression</td>
+  <td align="left">删除引用表达式</td>
+</tr>
+</tbody></table>
+
+
+<p>现在给出示例配置信息如下所示：</p>
+
+</div><div id="wmd-preview-section-9" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-json hljs">{
+    "<span class="hljs-attribute">id</span>":<span class="hljs-value"><span class="hljs-string">"1"</span></span>,
+    "<span class="hljs-attribute">upload_type</span>":<span class="hljs-value"><span class="hljs-string">"1"</span></span>,
+    "<span class="hljs-attribute">limit_type</span>":<span class="hljs-value"><span class="hljs-string">"jpg,gif,jpef,png,xls,xlsx"</span></span>,
+    "<span class="hljs-attribute">limit_count</span>":<span class="hljs-value"><span class="hljs-string">"3"</span></span>,
+    "<span class="hljs-attribute">limit_size</span>":<span class="hljs-value"><span class="hljs-string">"1000"</span></span>,
+    "<span class="hljs-attribute">dfs_group</span>":<span class="hljs-value"><span class="hljs-string">"word"</span></span>,
+    "<span class="hljs-attribute">compress_strategy</span>":<span class="hljs-value">{
+        "<span class="hljs-attribute">largeThumbnail</span>":<span class="hljs-value">{
+            "<span class="hljs-attribute">width</span>":<span class="hljs-value"><span class="hljs-string">"500"</span></span>,
+            "<span class="hljs-attribute">height</span>":<span class="hljs-value"><span class="hljs-string">"500"</span>
+        </span>}</span>,
+        "<span class="hljs-attribute">smallThumbnail</span>":<span class="hljs-value">{
+            "<span class="hljs-attribute">width</span>":<span class="hljs-value"><span class="hljs-string">"150"</span></span>,
+            "<span class="hljs-attribute">height</span>":<span class="hljs-value"><span class="hljs-string">"150"</span>
+        </span>}
+    </span>}</span>,
+    "<span class="hljs-attribute">delete_strategy</span>":<span class="hljs-value"><span class="hljs-string">""</span></span>,
+    "<span class="hljs-attribute">delete_expression</span>":<span class="hljs-value"><span class="hljs-string">"@testBusinessService.delete([fileInfo][id],[id])"</span>
+</span>}</code></pre>
+
+<p>除配置表外，还需要两张表配置文件的上传信息以及文件的FastDFS路径信息,示例表如下：</p>
+
+<p><strong>DFS_FILE</strong>：（此处命名有问题，请酌情根据自己需求命名） <br>
+用于保存文件的基本信息，如文件名，文件在nginx上的直接访问路径等</p>
+
+<table>
+<thead>
+<tr>
+  <th align="left">字段名</th>
+  <th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="left">id</td>
+  <td align="left">主键</td>
+</tr>
+<tr>
+  <td align="left">file_name</td>
+  <td align="left">上传文件名</td>
+</tr>
+<tr>
+  <td align="left">orginal_path</td>
+  <td align="left">源文件在FastDFS上的直接访问路径</td>
+</tr>
+<tr>
+  <td align="left">large_thumb_path</td>
+  <td align="left">大缩略图在FastDFS上的访问路径</td>
+</tr>
+<tr>
+  <td align="left">small_thumb_path</td>
+  <td align="left">小缩略图在FastDFS上的访问路径</td>
+</tr>
+</tbody></table>
+
+
+<p><strong>FAST_DFS_FILE</strong>： <br>
+用于保存文件在FastDFS上的实际路径信息</p>
+
+<table>
+<thead>
+<tr>
+  <th align="left">字段名</th>
+  <th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="left">id</td>
+  <td align="left">主键</td>
+</tr>
+<tr>
+  <td align="left">group_server_name</td>
+  <td align="left">文件服务器组名</td>
+</tr>
+<tr>
+  <td align="left">file_name</td>
+  <td align="left">文件名称</td>
+</tr>
+<tr>
+  <td align="left">file_id</td>
+  <td align="left">文件ID，对应DFS_FILE的主键，如果是图片，一个file_id可能对于多个Fast_DFS_FILE记录</td>
+</tr>
+<tr>
+  <td align="left">group_name</td>
+  <td align="left">文件服务器分配的组名称</td>
+</tr>
+<tr>
+  <td align="left">path</td>
+  <td align="left">文件存储路径，下载文件时，需与group_name结合获取文件内容</td>
+</tr>
+</tbody></table>
+
+
+</div><div id="wmd-preview-section-10" class="wmd-preview-section preview-content">
+
+<h3 id="13-上传后台配置">1.3 上传后台配置</h3>
+
+<p>文件控件后台提供一个访问接口，以供前台进行获取文件上传配置信息，文件上传操作，删除操作等。 <br>
+其中需要在Spring里将UploadController注入 <br>
+同时注入删除器Deleter</p>
+
+</div><div id="wmd-preview-section-11" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-xml hljs"><span class="hljs-tag">&lt;<span class="hljs-title">bean</span> <span class="hljs-attribute">name</span>=<span class="hljs-value">"deleter"</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"com.gillion.upload.strategy.delete.Deleter"</span>/&gt;</span></code></pre>
+
+<p>在dispatcher-servlet.xml中引入上传文件配置</p>
+
+</div><div id="wmd-preview-section-12" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-xml hljs"><span class="hljs-tag">&lt;<span class="hljs-title">import</span> <span class="hljs-attribute">resource</span>=<span class="hljs-value">"classpath*:spring-upload.xml"</span>/&gt;</span></code></pre>
+
+</div><div id="wmd-preview-section-13" class="wmd-preview-section preview-content">
+
+<h3 id="14-编写上传控件必须服务类">1.4 编写上传控件必须服务类</h3>
+
+<p>各个业务系统需根据自己的需求，实现UploadService接口，接口内容主要包括：</p>
+
+<ol><li>getUploadBaseInfo(String key)通过配置的key，获取配置信息</li>
+<li>saveUploadFile(UploadedFile uploadedFile,DFSFileInfo dfsFileInfo) 在文件上传到文件服务器后，传入文件的上传信息与在文件服务器中的保存信息，在这里主要操作将数据存入数据库，以便后续进行维护</li>
+<li>saveUploadImage(UploadedImageFile uploadedImageFile,ImageDFSFileInfo imageDFSFileInfos) 与第二个方法类似，此处是处理图片上传的信息，图片上传的信息包括三个文件信息：原图，大缩略图，小缩略图</li>
+<li>getUploadInfo(String key)获取文件的详细配置信息，与getUploadBaseInfo不同的是，此处返回所有配置包括服务器分组配置等，这些信息不应暴露给前端，所以此处分为两个方法调用。</li>
+<li>deleteById(String fileId) 根据文件ID，删除数据库中存储的文件信息</li>
+<li>getDfsFileInfo(String fileId) 获取文件在文件服务器中的信息，如分组，获取路径等</li>
+</ol>
+
+<p>以下给个示例实现，请根据各自不同的表设计进行修改：</p>
+
+</div><div id="wmd-preview-section-14" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-java hljs"><span class="hljs-keyword">package</span> com.gillion.sebusiness.demo.service.upload.impl;
+
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.databind.ObjectMapper;
+<span class="hljs-keyword">import</span> com.gfa4j.mybatis.mapper.BaseMapper;
+<span class="hljs-keyword">import</span> com.gfa4j.mybatis.service.impl.BaseServiceImpl;
+<span class="hljs-keyword">import</span> com.gillion.fdfs.entity.DFSFileInfo;
+<span class="hljs-keyword">import</span> com.gillion.sebusiness.demo.service.upload.DfsFileService;
+
+<span class="hljs-keyword">import</span> com.gillion.sebusiness.upload.mapper.DfsFileMapper;
+<span class="hljs-keyword">import</span> com.gillion.sebusiness.upload.mapper.FastDfsFileMapper;
+<span class="hljs-keyword">import</span> com.gillion.sebusiness.upload.model.DfsFile;
+<span class="hljs-keyword">import</span> com.gillion.sebusiness.upload.model.FastDfsFile;
+<span class="hljs-keyword">import</span> com.gillion.sebusiness.upload.model.FastDfsFileExample;
+<span class="hljs-keyword">import</span> com.gillion.upload.entity.*;
+<span class="hljs-keyword">import</span> com.gillion.upload.service.UploadService;
+<span class="hljs-keyword">import</span> com.gillion.upload.strategy.compress.CompressStrategy;
+<span class="hljs-keyword">import</span> com.gillion.upload.strategy.delete.DeleteStrategy;
+<span class="hljs-keyword">import</span> org.apache.commons.lang3.StringUtils;
+<span class="hljs-keyword">import</span> org.springframework.beans.BeanUtils;
+<span class="hljs-keyword">import</span> org.springframework.beans.factory.InitializingBean;
+<span class="hljs-keyword">import</span> org.springframework.beans.factory.annotation.Autowired;
+<span class="hljs-keyword">import</span> org.springframework.jdbc.core.JdbcTemplate;
+<span class="hljs-keyword">import</span> org.springframework.jdbc.core.RowMapper;
+<span class="hljs-keyword">import</span> org.springframework.stereotype.Service;
+
+<span class="hljs-keyword">import</span> javax.sql.DataSource;
+<span class="hljs-keyword">import</span> java.io.IOException;
+<span class="hljs-keyword">import</span> java.sql.ResultSet;
+<span class="hljs-keyword">import</span> java.sql.SQLException;
+<span class="hljs-keyword">import</span> java.util.Arrays;
+<span class="hljs-keyword">import</span> java.util.List;
+<span class="hljs-keyword">import</span> java.util.Map;
+<span class="hljs-keyword">import</span> java.util.UUID;
+<span class="hljs-keyword">import</span> java.util.stream.Collectors;
+
+<span class="hljs-javadoc">/**
+ * Created by wengms on 2015/7/29.
+ */</span>
+<span class="hljs-annotation">@Service</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">UploadServiceImpl</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">BaseServiceImpl</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">UploadService</span>, <span class="hljs-title">DfsFileService</span>, <span class="hljs-title">InitializingBean</span> </span>{
+
+    <span class="hljs-annotation">@Autowired</span>
+    <span class="hljs-keyword">private</span> DataSource dataSource;
+
+    <span class="hljs-keyword">private</span> JdbcTemplate jdbcTemplate;
+
+    <span class="hljs-annotation">@Autowired</span>
+    <span class="hljs-keyword">private</span> DfsFileMapper dfsFileMapper;
+
+    <span class="hljs-annotation">@Autowired</span>
+    <span class="hljs-keyword">private</span> FastDfsFileMapper fastDfsFileMapper;
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> UploadBaseInfo <span class="hljs-title">getUploadBaseInfo</span><span class="hljs-params">(String key)</span> </span>{
+        <span class="hljs-keyword">return</span> jdbcTemplate.queryForObject(<span class="hljs-string">"SELECT DFS_GROUP,UPLOAD_TYPE,LIMIT_TYPE,LIMIT_COUNT,LIMIT_SIZE FROM UPLOAD_INFO WHERE ID = ?"</span>, <span class="hljs-keyword">new</span> RowMapper&lt;UploadBaseInfo&gt;() {
+            <span class="hljs-annotation">@Override</span>
+            <span class="hljs-function"><span class="hljs-keyword">public</span> UploadBaseInfo <span class="hljs-title">mapRow</span><span class="hljs-params">(ResultSet rs, <span class="hljs-keyword">int</span> rowNum)</span> <span class="hljs-keyword">throws</span> SQLException </span>{
+                UploadBaseInfo uploadBaseInfo = <span class="hljs-keyword">new</span> UploadBaseInfo();
+                uploadBaseInfo.setDfsGroup(rs.getString(<span class="hljs-number">1</span>));
+                uploadBaseInfo.setUploadType(rs.getInt(<span class="hljs-number">2</span>));
+                String limitTypeStr = rs.getString(<span class="hljs-number">3</span>);
+                <span class="hljs-keyword">if</span> (!StringUtils.isEmpty(limitTypeStr)) {
+                    uploadBaseInfo.setLimitType(Arrays.asList(limitTypeStr.split(<span class="hljs-string">","</span>)));
+                }
+                uploadBaseInfo.setLimitCount(rs.getInt(<span class="hljs-number">4</span>));
+                uploadBaseInfo.setLimitSize(rs.getBigDecimal(<span class="hljs-number">5</span>));
+                <span class="hljs-keyword">return</span> uploadBaseInfo;
+            }
+        }, key);
+    }
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> BaseMapper <span class="hljs-title">getMapper</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> dfsFileMapper;
+    }
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">saveUploadFile</span><span class="hljs-params">(UploadedFile uploadedFile,DFSFileInfo dfsFileInfo)</span> </span>{
+        DfsFile dfsFile = <span class="hljs-keyword">new</span> DfsFile();
+        dfsFile.setFileName(uploadedFile.getFileName());
+        dfsFile.setOrginalPath(uploadedFile.getOriginalPath());
+        dfsFile = <span class="hljs-keyword">this</span>.save(dfsFile);
+        saveFile(dfsFile.getId(),dfsFileInfo);
+        <span class="hljs-keyword">return</span> dfsFile;
+    }
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">saveUploadImage</span><span class="hljs-params">(UploadedImageFile uploadedImageFile,ImageDFSFileInfo imageDFSFileInfos)</span> </span>{
+        DfsFile dfsFile = <span class="hljs-keyword">new</span> DfsFile();
+        dfsFile.setFileName(uploadedImageFile.getFileName());
+        dfsFile.setLargeThumbPath(uploadedImageFile.getLargeThumbnailPath());
+        dfsFile.setOrginalPath(uploadedImageFile.getOriginalPath());
+        dfsFile.setSmallThumbPath(uploadedImageFile.getSmallThumbnailPath());
+        dfsFile = <span class="hljs-keyword">this</span>.save(dfsFile);
+        <span class="hljs-comment">/*对FastDFS信息进行存储*/</span>
+        <span class="hljs-comment">//1.存储原图</span>
+        saveFile(dfsFile.getId(), imageDFSFileInfos.getOriginalImageFileInfo());
+        <span class="hljs-comment">//2.存储大缩略图</span>
+        saveFile(dfsFile.getId(), imageDFSFileInfos.getLargeThumbnailFileInfo());
+        <span class="hljs-comment">//3.存储小缩略图</span>
+        saveFile(dfsFile.getId(), imageDFSFileInfos.getSmallThumbnailFileInfo());
+        <span class="hljs-keyword">return</span> dfsFile;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">saveFile</span><span class="hljs-params">(String fileId,DFSFileInfo dfsFileInfo)</span></span>{
+        <span class="hljs-keyword">if</span> (dfsFileInfo != <span class="hljs-keyword">null</span>){
+            FastDfsFile file = <span class="hljs-keyword">new</span> FastDfsFile();
+            file.setFileid(fileId);
+            file.setGroupName(dfsFileInfo.getGroup());
+            file.setPath(dfsFileInfo.getPath());
+            file.setGroupServerName(dfsFileInfo.getGroupServer());
+            file.setFileName(dfsFileInfo.getFileName());
+            file.setId(UUID.randomUUID().toString());
+            fastDfsFileMapper.insert(file);
+        }
+    }
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> UploadInfo <span class="hljs-title">getUploadInfo</span><span class="hljs-params">(String key)</span> </span>{
+        <span class="hljs-keyword">return</span> jdbcTemplate.queryForObject(<span class="hljs-string">"SELECT ID,DFS_GROUP,UPLOAD_TYPE,LIMIT_TYPE,LIMIT_COUNT,LIMIT_SIZE,DELETE_STRATEGY,DELETE_EXPRESSION,COMPRESS_STRATEGY FROM UPLOAD_INFO WHERE ID = ?"</span>, <span class="hljs-keyword">new</span> RowMapper&lt;UploadInfo&gt;() {
+            <span class="hljs-annotation">@Override</span>
+            <span class="hljs-function"><span class="hljs-keyword">public</span> UploadInfo <span class="hljs-title">mapRow</span><span class="hljs-params">(ResultSet rs, <span class="hljs-keyword">int</span> rowNum)</span> <span class="hljs-keyword">throws</span> SQLException </span>{
+                UploadInfo uploadInfo = <span class="hljs-keyword">null</span>;
+                <span class="hljs-keyword">if</span> (StringUtils.equals(<span class="hljs-string">"0"</span>,rs.getString(<span class="hljs-number">3</span>))){
+                    uploadInfo = <span class="hljs-keyword">new</span> UploadInfo();
+                }<span class="hljs-keyword">else</span>{
+                    uploadInfo = <span class="hljs-keyword">new</span> ImageUploadInfo();
+                }
+
+
+                uploadInfo.setKey(rs.getString(<span class="hljs-number">1</span>));
+                uploadInfo.setDfsGroup(rs.getString(<span class="hljs-number">2</span>));
+                uploadInfo.setUploadType(rs.getInt(<span class="hljs-number">3</span>));
+                String limitTypeStr = rs.getString(<span class="hljs-number">4</span>);
+                <span class="hljs-keyword">if</span> (!StringUtils.isEmpty(limitTypeStr)) {
+                    uploadInfo.setLimitType(Arrays.asList(limitTypeStr.split(<span class="hljs-string">","</span>)));
+                }
+                uploadInfo.setLimitCount(rs.getInt(<span class="hljs-number">5</span>));
+                uploadInfo.setLimitSize(rs.getBigDecimal(<span class="hljs-number">6</span>));
+                String deleteStrategy = rs.getString(<span class="hljs-number">7</span>);
+                <span class="hljs-keyword">if</span> (StringUtils.equals(<span class="hljs-string">"1"</span>,deleteStrategy)){
+                    uploadInfo.setDeleteStrategy(DeleteStrategy.PHYSIC_DELETE);
+                }<span class="hljs-keyword">else</span>{
+                    uploadInfo.setDeleteStrategy(DeleteStrategy.LOGIC_DELETE);
+                }
+                uploadInfo.setDeleteExpression(rs.getString(<span class="hljs-number">8</span>));
+                <span class="hljs-keyword">if</span> (StringUtils.equals(<span class="hljs-string">"0"</span>,rs.getString(<span class="hljs-number">3</span>))){
+                    <span class="hljs-keyword">return</span> uploadInfo;
+                }<span class="hljs-keyword">else</span>{
+                    ImageUploadInfo imageUploadInfo = (ImageUploadInfo) uploadInfo;
+                    <span class="hljs-comment">//解析压缩策略</span>
+                    ObjectMapper objectMapper = <span class="hljs-keyword">new</span> ObjectMapper();
+                    CompressStrategy compressStrategy =<span class="hljs-keyword">null</span>;
+                    <span class="hljs-keyword">try</span> {
+                        compressStrategy = objectMapper.readValue(rs.getString(<span class="hljs-number">9</span>),objectMapper.constructType(CompressStrategy.class));
+                    } <span class="hljs-keyword">catch</span> (IOException e) {
+                        e.printStackTrace();
+                    }
+                    imageUploadInfo.setCompressStrategy(compressStrategy);
+
+                    <span class="hljs-keyword">return</span> imageUploadInfo;
+                }
+            }
+        }, key);
+    }
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">deleteById</span><span class="hljs-params">(String fileId)</span> </span>{
+        <span class="hljs-comment">//删除文件ID下所有相关文件数据</span>
+        FastDfsFileExample example = <span class="hljs-keyword">new</span> FastDfsFileExample();
+        example.createCriteria().andFileidEqualTo(fileId);
+        fastDfsFileMapper.deleteByExample(example);
+
+        <span class="hljs-comment">//删除文件数据</span>
+        dfsFileMapper.deleteByPrimaryKey(fileId);
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">true</span>;
+    }
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> List&lt;DFSFileInfo&gt; <span class="hljs-title">getDfsFileInfo</span><span class="hljs-params">(String fileId)</span> </span>{
+        FastDfsFileExample example = <span class="hljs-keyword">new</span> FastDfsFileExample();
+        example.createCriteria().andFileidEqualTo(fileId);
+        List&lt;FastDfsFile&gt; fastDfsFiles = fastDfsFileMapper.selectByExample(example);
+
+        <span class="hljs-keyword">return</span> fastDfsFiles.stream().map(fastDfsFile-&gt;{
+            DFSFileInfo dfsFileInfo = <span class="hljs-keyword">new</span> DFSFileInfo();
+            dfsFileInfo.setGroup(fastDfsFile.getGroupName());
+            dfsFileInfo.setPath(fastDfsFile.getPath());
+            dfsFileInfo.setFileName(fastDfsFile.getFileName());
+            dfsFileInfo.setGroupServer(fastDfsFile.getGroupServerName());
+            <span class="hljs-keyword">return</span> dfsFileInfo;
+        }).collect(Collectors.toList());
+    }
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">afterPropertiesSet</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception </span>{
+        <span class="hljs-keyword">this</span>.jdbcTemplate = <span class="hljs-keyword">new</span> JdbcTemplate(<span class="hljs-keyword">this</span>.dataSource);
+    }
+}</code></pre>
+
+</div><div id="wmd-preview-section-15" class="wmd-preview-section preview-content">
+
+<h3 id="15-编写示例业务配置">1.5 编写示例业务配置</h3>
+
+<p>现有示例业务表如下： <br>
+TEST_BUSINESS:</p>
+
+<table>
+<thead>
+<tr>
+  <th align="left">列名</th>
+  <th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="left">id</td>
+  <td align="left">主键</td>
+</tr>
+<tr>
+  <td align="left">business_name</td>
+  <td align="left">业务名称</td>
+</tr>
+</tbody></table>
+
+
+<p>TEST_BUSINESS_FILE (业务与文件关系表):</p>
+
+<table>
+<thead>
+<tr>
+  <th align="left">列名</th>
+  <th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="left">id</td>
+  <td align="left">主键</td>
+</tr>
+<tr>
+  <td align="left">BUSINESS_ID</td>
+  <td align="left">业务ID</td>
+</tr>
+<tr>
+  <td align="left">FILE_ID</td>
+  <td align="left">文件存储ID，对应DFS_FILE表的主键</td>
+</tr>
+</tbody></table>
+
+
+<p>编写业务操作Service与Controller，此处略去接口编写，自己根据业务需要添加</p>
+
+<p>TestBusinessServiceImpl.java</p>
+
+</div><div id="wmd-preview-section-16" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-java hljs"><span class="hljs-keyword">package</span> com.gillion.sebusiness.demo.service.upload.impl;
+
+<span class="hljs-keyword">import</span> com.gfa4j.mybatis.mapper.BaseMapper;
+<span class="hljs-keyword">import</span> com.gfa4j.mybatis.service.impl.BaseServiceImpl;
+<span class="hljs-keyword">import</span> com.gfa4j.utils.ResultUtils;
+<span class="hljs-keyword">import</span> com.gillion.fdfs.group.ClientGroupContainer;
+<span class="hljs-keyword">import</span> com.gillion.sebusiness.demo.service.upload.TestBusinessService;
+<span class="hljs-keyword">import</span> com.gillion.sebusiness.demo.vo.upload.TestBusinessVO;
+<span class="hljs-keyword">import</span> com.gillion.sebusiness.upload.mapper.*;
+<span class="hljs-keyword">import</span> com.gillion.sebusiness.upload.model.DfsFile;
+<span class="hljs-keyword">import</span> com.gillion.sebusiness.upload.model.TestBusiness;
+<span class="hljs-keyword">import</span> com.gillion.sebusiness.upload.model.TestBusinessFile;
+<span class="hljs-keyword">import</span> com.gillion.sebusiness.upload.model.TestBusinessFileExample;
+<span class="hljs-keyword">import</span> com.gillion.upload.service.UploadService;
+<span class="hljs-keyword">import</span> org.springframework.beans.BeanUtils;
+<span class="hljs-keyword">import</span> org.springframework.beans.factory.annotation.Autowired;
+<span class="hljs-keyword">import</span> org.springframework.stereotype.Service;
+
+<span class="hljs-keyword">import</span> java.util.List;
+<span class="hljs-keyword">import</span> java.util.UUID;
+<span class="hljs-keyword">import</span> java.util.stream.Collectors;
+
+<span class="hljs-javadoc">/**
+ * Created by wengms on 2015/8/6.
+ */</span>
+<span class="hljs-annotation">@Service</span>(<span class="hljs-string">"testBusinessService"</span>)
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TestBusinessServiceImpl</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">BaseServiceImpl</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">TestBusinessService</span> </span>{
+
+    <span class="hljs-annotation">@Autowired</span>
+    <span class="hljs-keyword">private</span> TestBusinessMapper testBusinessMapper;
+
+    <span class="hljs-annotation">@Autowired</span>
+    <span class="hljs-keyword">private</span> TestBusinessFileMapper testBusinessFileMapper;
+
+    <span class="hljs-annotation">@Autowired</span>
+    <span class="hljs-keyword">private</span> DfsFileMapper dfsFileMapper;
+
+    <span class="hljs-annotation">@Autowired</span>
+    <span class="hljs-keyword">private</span> UploadService uploadService;
+
+    <span class="hljs-annotation">@Autowired</span>
+    <span class="hljs-keyword">private</span> UploadInfoMapper uploadInfoMapper;
+
+    <span class="hljs-annotation">@Autowired</span>
+    <span class="hljs-keyword">private</span> FastDfsFileMapper fastDfsFileMapper;
+
+    <span class="hljs-annotation">@Autowired</span>
+    <span class="hljs-keyword">private</span> ClientGroupContainer clientGroupContainer;
+
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> BaseMapper <span class="hljs-title">getMapper</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> testBusinessMapper;
+    }
+
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> TestBusinessVO <span class="hljs-title">save</span><span class="hljs-params">(TestBusinessVO testBusinessVO)</span> </span>{
+        TestBusiness testBusiness = <span class="hljs-keyword">new</span> TestBusiness();
+        BeanUtils.copyProperties(testBusinessVO, testBusiness);
+        List&lt;DfsFile&gt; dfsFiles = testBusinessVO.getDfsFiles();
+        List&lt;String&gt; fileIds = dfsFiles.stream().map((dfsFile) -&gt; dfsFile.getId()).collect(Collectors.toList());
+
+        testBusiness = <span class="hljs-keyword">this</span>.save(testBusiness);
+        <span class="hljs-keyword">final</span> String businessId = testBusiness.getId();
+        fileIds.forEach(fileId -&gt; {
+            TestBusinessFile testBusinessFile = <span class="hljs-keyword">new</span> TestBusinessFile();
+            testBusinessFile.setFileId(fileId);
+            testBusinessFile.setBusinessId(businessId);
+            testBusinessFile.setId(UUID.randomUUID().toString());
+            <span class="hljs-keyword">this</span>.testBusinessFileMapper.insert(testBusinessFile);
+        });
+        <span class="hljs-keyword">return</span> testBusinessVO;
+    }
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> TestBusinessVO <span class="hljs-title">selectById</span><span class="hljs-params">(String id)</span> </span>{
+        TestBusiness testBusiness = <span class="hljs-keyword">this</span>.selectByPrimaryKey(id);
+        TestBusinessFileExample example = <span class="hljs-keyword">new</span> TestBusinessFileExample();
+        example.createCriteria().andBusinessIdEqualTo(id);
+        List&lt;TestBusinessFile&gt; testBusinessFiles = <span class="hljs-keyword">this</span>.testBusinessFileMapper.selectByExample(example);
+        List&lt;DfsFile&gt; dfsFiles = testBusinessFiles.stream().map((file) -&gt; dfsFileMapper.selectByPrimaryKey(file.getFileId())).collect(Collectors.toList());
+
+        TestBusinessVO testBusinessVO = <span class="hljs-keyword">new</span> TestBusinessVO();
+        BeanUtils.copyProperties(testBusiness, testBusinessVO);
+        testBusinessVO.setDfsFiles(dfsFiles);
+
+        <span class="hljs-keyword">return</span> testBusinessVO;
+    }
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">delete</span><span class="hljs-params">(String fileId, String bussinessId)</span> </span>{
+        TestBusinessFileExample testBusinessFileExample = <span class="hljs-keyword">new</span> TestBusinessFileExample();
+        testBusinessFileExample.createCriteria().andBusinessIdEqualTo(bussinessId).andFileIdEqualTo(fileId);
+        testBusinessFileMapper.deleteByExample(testBusinessFileExample);
+        uploadInfoMapper.deleteByPrimaryKey(fileId);
+        <span class="hljs-keyword">return</span> ResultUtils.getSuccessResultData();
+    }
+}
+</code></pre>
+
+<p>在数据库表UPLOAD_INFO里配置删除引用表达式为：@testBusinessService.delete([fileInfo][id],[id])，即在删除文件时，调用此方法，删除业务表与文件表的引用关系</p>
+
+<p><strong>TestBusinessVO</strong>:</p>
+
+</div><div id="wmd-preview-section-17" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="hljs java"><span class="hljs-keyword">package</span> com.gillion.sebusiness.demo.vo.upload;
+
+<span class="hljs-keyword">import</span> com.gillion.sebusiness.upload.model.DfsFile;
+
+<span class="hljs-keyword">import</span> java.util.List;
+
+<span class="hljs-javadoc">/**
+ * Created by wengms on 2015/8/6.
+ */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TestBusinessVO</span> </span>{
+    <span class="hljs-keyword">private</span> String id;
+    <span class="hljs-keyword">private</span> String businessName;
+
+    <span class="hljs-keyword">private</span> List&lt;DfsFile&gt; dfsFiles;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">getId</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> id;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setId</span><span class="hljs-params">(String id)</span> </span>{
+        <span class="hljs-keyword">this</span>.id = id;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">getBusinessName</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> businessName;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setBusinessName</span><span class="hljs-params">(String businessName)</span> </span>{
+        <span class="hljs-keyword">this</span>.businessName = businessName;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> List&lt;DfsFile&gt; <span class="hljs-title">getDfsFiles</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> dfsFiles;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setDfsFiles</span><span class="hljs-params">(List&lt;DfsFile&gt; dfsFiles)</span> </span>{
+        <span class="hljs-keyword">this</span>.dfsFiles = dfsFiles;
+    }
+}
+</code></pre>
+
+<p><strong>TestBusinessController</strong>:</p>
+
+</div><div id="wmd-preview-section-18" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-java hljs"><span class="hljs-keyword">package</span> com.gillion.sebusiness.demo.controller.upload;
+
+<span class="hljs-keyword">import</span> com.gillion.sebusiness.demo.service.datasource.StudentService;
+<span class="hljs-keyword">import</span> com.gillion.sebusiness.demo.service.upload.TestBusinessService;
+<span class="hljs-keyword">import</span> com.gillion.sebusiness.demo.vo.upload.TestBusinessVO;
+<span class="hljs-keyword">import</span> com.gillion.sebusiness.upload.model.DfsFile;
+<span class="hljs-keyword">import</span> com.gillion.sebusiness.upload.model.TestBusiness;
+<span class="hljs-keyword">import</span> com.gillion.sebusiness.upload.model.TestBusinessFile;
+<span class="hljs-keyword">import</span> org.springframework.beans.BeanUtils;
+<span class="hljs-keyword">import</span> org.springframework.beans.factory.annotation.Autowired;
+<span class="hljs-keyword">import</span> org.springframework.stereotype.Controller;
+<span class="hljs-keyword">import</span> org.springframework.web.bind.annotation.*;
+
+<span class="hljs-keyword">import</span> java.util.List;
+<span class="hljs-keyword">import</span> java.util.stream.Collectors;
+
+<span class="hljs-javadoc">/**
+ * Created by wengms on 2015/8/6.
+ */</span>
+<span class="hljs-annotation">@RequestMapping</span>(<span class="hljs-string">"/upload/test"</span>)
+<span class="hljs-annotation">@Controller</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TestBusinessController</span> </span>{
+
+    <span class="hljs-annotation">@Autowired</span>
+    <span class="hljs-keyword">private</span> TestBusinessService testBusinessService;
+
+
+    <span class="hljs-annotation">@ResponseBody</span>
+    <span class="hljs-annotation">@RequestMapping</span>(method = RequestMethod.POST)
+    <span class="hljs-function"><span class="hljs-keyword">public</span> TestBusinessVO <span class="hljs-title">save</span><span class="hljs-params">(@RequestBody TestBusinessVO testBusinessVO)</span></span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.testBusinessService.save(testBusinessVO);
+    }
+
+    <span class="hljs-annotation">@RequestMapping</span>(method = RequestMethod.GET)
+    <span class="hljs-annotation">@ResponseBody</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> TestBusinessVO <span class="hljs-title">get</span><span class="hljs-params">(@RequestParam String id)</span></span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.testBusinessService.selectById(id);
+    }
+}</code></pre>
+
+<p>至此，后端配置已完成。</p>
+
+</div><div id="wmd-preview-section-943" class="wmd-preview-section preview-content">
+
+<h2 id="2-上传控件前端配置">2. 上传控件前端配置</h2>
+
+<p>前端配置属性：</p>
+
+<table>
+<thead>
+<tr>
+  <th align="left">参数名</th>
+  <th align="left">含义</th>
+  <th align="left">是否必须</th>
+  <th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="left">key</td>
+  <td align="left">用于前端获取前端配置的key</td>
+  <td align="left">Y</td>
+  <td align="left"></td>
+</tr>
+<tr>
+  <td align="left">upload-info-url</td>
+  <td align="left">获取配置信息的访问地址</td>
+  <td align="left">Y</td>
+  <td align="left"></td>
+</tr>
+<tr>
+  <td align="left">upload-url</td>
+  <td align="left">文件上传地址</td>
+  <td align="left">N</td>
+  <td align="left">若没填写，默认与upload-info-url相同</td>
+</tr>
+<tr>
+  <td align="left">delete-url</td>
+  <td align="left">点击删除时，访问的接口地址</td>
+  <td align="left">Y</td>
+  <td align="left"></td>
+</tr>
+<tr>
+  <td align="left">delete-params</td>
+  <td align="left">在删除时，需要携带的信息，如：业务ID等</td>
+  <td align="left">N</td>
+  <td align="left">为字面量配置：{“businessId”:”321321321”}</td>
+</tr>
+<tr>
+  <td align="left">initial-show-count</td>
+  <td align="left">初始化时显示的数量</td>
+  <td align="left">N</td>
+  <td align="left">默认为1</td>
+</tr>
+<tr>
+  <td align="left">image-show-url-prop</td>
+  <td align="left">如果控件显示是从已有的ngModel中取值进行显示，则ngModel必须提供一个控件访问地址，同时还需要配置此属性去接收那个地址，用于控件进行显示</td>
+  <td align="left">N</td>
+  <td align="left">默认为smallThumbnail</td>
+</tr>
+<tr>
+  <td align="left">ng-model</td>
+  <td align="left">双向绑定</td>
+  <td align="left">N</td>
+  <td align="left">若有设值，则为一个数组，默认每个文件信息里必须包含：id，url用于在页面中文件的显示与点击删除按钮时，文件信息的传递</td>
+</tr>
+</tbody></table>
+
+
+<p>示例配置：</p></div><div id="wmd-preview-section-20" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-html hljs xml">    <span class="hljs-tag">&lt;<span class="hljs-title">g-upload-group</span> 
+    <span class="hljs-attribute">key</span>=<span class="hljs-value">"1"</span> 
+    <span class="hljs-attribute">upload-info-url</span>=<span class="hljs-value">"/sebusiness/upload"</span>
+    <span class="hljs-attribute">upload-url</span>=<span class="hljs-value">"/sebusiness/upload"</span>
+    <span class="hljs-attribute">delete-url</span>=<span class="hljs-value">"/sebusiness/upload/delete"</span>
+    <span class="hljs-attribute">delete-params</span>=<span class="hljs-value">"deleteParams"</span>
+    <span class="hljs-attribute">initial-show-count</span>=<span class="hljs-value">"1"</span>
+    <span class="hljs-attribute">image-show-url-prop</span>=<span class="hljs-value">"smallThumbPath"</span>
+    <span class="hljs-attribute">ng-model</span>=<span class="hljs-value">"business.dfsFiles"</span>
+    &gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-title">g-upload-group</span>&gt;</span></code></pre>
+
+<p>js示例代码：</p>
+
+</div><div id="wmd-preview-section-21" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-javscript hljs nimrod">
+define([<span class="hljs-string">"angular"</span>, <span class="hljs-string">"framework/upload/UploadGroupModule"</span>], function(angular) {
+    <span class="hljs-keyword">var</span> <span class="hljs-type">TestUploadModule</span>;
+    <span class="hljs-type">TestUploadModule</span> = angular.module(<span class="hljs-string">"TestUploadModule"</span>, [<span class="hljs-string">"UploadGroupModule"</span>]);
+    <span class="hljs-type">TestUploadModule</span>.controller(<span class="hljs-string">"UploadController"</span>, function($scope, <span class="hljs-type">Resource</span>) {
+      <span class="hljs-keyword">var</span> <span class="hljs-type">Business</span>;
+      <span class="hljs-type">Business</span> = <span class="hljs-type">Resource</span>(<span class="hljs-string">"/sebusiness/upload/test"</span>);
+      <span class="hljs-type">Business</span>.get({
+        id: <span class="hljs-string">"e782f3a3-1988-47b6-a768-1e1267dd78cc"</span>
+      }, function(<span class="hljs-literal">result</span>) {
+        $scope.business = <span class="hljs-literal">result</span>;
+        $scope.deleteParams = {
+          id: <span class="hljs-string">"e782f3a3-1988-47b6-a768-1e1267dd78cc"</span>
+        };
+      });
+
+      /*保存订单 */
+      $scope.save = function() {
+        $scope.business.id = <span class="hljs-type">void</span> <span class="hljs-number">0</span>;
+        <span class="hljs-type">Business</span>.save($scope.business, function(<span class="hljs-literal">result</span>) {
+          console.info(<span class="hljs-string">"保存成功！！"</span>);
+        });
+      };
+    });
+  });</code></pre></div><div id="wmd-preview-section-footnotes" class="preview-content"></div></div></body></html>

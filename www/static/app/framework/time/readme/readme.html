@@ -1,0 +1,68 @@
+<!DOCTYPE html><html><head><title>时间控件</title><meta charset='utf-8'><link href='./marxico.css' rel='stylesheet'></head><body><div id='preview-contents' class='note-content'>
+                        <div id="wmd-preview" class="preview-content"></div>
+                    <div id="wmd-preview-section-49" class="wmd-preview-section preview-content">
+
+</div><div id="wmd-preview-section-338" class="wmd-preview-section preview-content">
+
+<h1 id="时间控件">时间控件</h1>
+
+<table>
+<thead>
+<tr>
+  <th align="left">参数名</th>
+  <th align="left">含义</th>
+  <th align="left">是否必须</th>
+  <th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="left">default-time</td>
+  <td align="left">默认时间</td>
+  <td align="left">N</td>
+  <td align="left">若没填写，默认为当前时间</td>
+</tr>
+<tr>
+  <td align="left">pattern</td>
+  <td align="left">时间格式</td>
+  <td align="left">N</td>
+  <td align="left">若没填写，默认为24小时制，即HH:mm,可配成hh:mm（12小时制）或HH:mm（24小时制）</td>
+</tr>
+<tr>
+  <td align="left">width</td>
+  <td align="left">控件长度</td>
+  <td align="left">N</td>
+  <td align="left"></td>
+</tr>
+<tr>
+  <td align="left">cssClass</td>
+  <td align="left">需要加入的额外CSS-Class</td>
+  <td align="left">N</td>
+  <td align="left"></td>
+</tr>
+<tr>
+  <td align="left">cssStyle</td>
+  <td align="left">需要加入的额外style信息</td>
+  <td align="left">N</td>
+  <td align="left">为字面量配置：{“backgound-color”:red,”width”:”20px”}</td>
+</tr>
+<tr>
+  <td align="left">disabled</td>
+  <td align="left">是否禁用当前控件</td>
+  <td align="left">N</td>
+  <td align="left"></td>
+</tr>
+</tbody></table>
+
+
+<p>使用实例：</p>
+
+</div><div id="wmd-preview-section-387" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-html hljs xml"><span class="hljs-tag">&lt;<span class="hljs-title">g-time</span> 
+<span class="hljs-attribute">pattern</span>=<span class="hljs-value">"hh:mm"</span> 
+<span class="hljs-attribute">width</span>=<span class="hljs-value">"300px"</span> 
+<span class="hljs-attribute">css-class</span>=<span class="hljs-value">"test-class"</span> 
+<span class="hljs-attribute">css-style</span>=<span class="hljs-value">"{'background-color':'#eee'}"</span>  
+<span class="hljs-attribute">ng-model</span>=<span class="hljs-value">"test.time"</span>
+<span class="hljs-attribute">default-time</span>=<span class="hljs-value">"'11:00'"</span>
+&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-title">g-time</span>&gt;</span></code></pre></div><div id="wmd-preview-section-footnotes" class="preview-content"></div></div></body></html>

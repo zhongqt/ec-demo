@@ -1,0 +1,3 @@
+# Project exclude paths
+/ec-demo-api/target/
+/ec-demo-business/target/

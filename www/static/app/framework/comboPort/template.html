@@ -1,0 +1,11 @@
+<div class="divDialog" symbol="dialog" ng-show="displayProperty" ng-click="comboPort.portClick($event)">
+    <table cellpadding="0" cellspacing="0"  >
+        <tbody>
+        <tr ng-repeat="area in portData.area" data-row-index="{{$index}}"   ng-class-even="\'old-area\'">
+            <th >{{area.name}}</th>
+            <td width="{{tdWidth}}" ng-mouseover="comboPort.mouseOver($event)" ng-mouseout="comboPort.mouseOut($event)"><span ng-repeat="port in area.port"  ng-click="comboPort.hiddenView()" ><a href="javascript:void(0);" data-code="{{port.code}}" data-port-index="{{$index}}">{{port.name}}</a></span></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<input type="hidden" name="{{submitName||\'hiddenPort\'}}" ng-value="submitValue"/>

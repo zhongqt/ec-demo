@@ -1,0 +1,48 @@
+<div class="table-settings">
+    <div class="title">
+        <span class="fl">{{title}}</span>
+        <button class="fr"><i class="iconfont icon-guanbi"></i></button>
+    </div>
+
+    <div class="body">
+        <div class="box fl">
+            <h3>
+                {{selectedGroupName || \'已选中\'}}
+                <button ng-click="colSettings.last()" type="button" class="fr"><i class="iconfont icon-dingbu"></i>
+                </button>
+                <button ng-click="colSettings.down()" type="button" class="fr mt-2"><i
+                        class="iconfont icon-shangyi"></i></button>
+                <button ng-click="colSettings.up()" type="button" class="fr mt-2"><i class="iconfont icon-xiayi"></i>
+                </button>
+                <button ng-click="colSettings.first()" type="button" class="fr"><i class="iconfont icon-dibu"></i>
+                </button>
+            </h3>
+            <ul>
+                <li ng-class="{\'act\': multiSelect._anySelection(item)}"
+                    ng-repeat="item in colSettings._getSelected() track by $id(item)" ng-click="addSelection(item, \'selected\')">getText(item)</li>
+            </ul>
+        </div>
+
+        <div class="center fl">
+            <a ng-click="colSettings.deselect()" href="javascript:;"><i class="iconfont icon-xiangyou"></i></a>
+            <a ng-click="colSettings.deselectAll()" href="javascript:;"><i class="iconfont icon-xiangyou2"></i></a>
+            <a ng-click="colSettings.select()" href="javascript:;"><i class="iconfont icon-xiangzuo"></i></a>
+            <a ng-click="colSettings.selectAll()" href="javascript:;"><i class="iconfont icon-xiangzuo2"></i></a>
+        </div>
+
+        <div class="box fr">
+            <h3>
+                {{unselectedGroupName || \'未选中\'}}
+            </h3>
+            <ul>
+                <li ng-class="{\'act\': multiSelect._anySelection(item)}"
+                    ng-repeat="item in colSettings._getUnSelected() track by $id(item)" ng-click="addSelection(item, \'unselected\')">getText(item)</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer">
+        <a href="javascript(0):;" class="btn btn-normal">确认</a>
+        <a href="javascript(0):;" class="btn btn-stroke">取消</a>
+    </div>
+</div>

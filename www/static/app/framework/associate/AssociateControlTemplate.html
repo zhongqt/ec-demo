@@ -1,0 +1,19 @@
+<div class="table-wrapper" style="display: none;">
+    <table cellpadding="0" cellspacing="0" style="{{tableCssStyle}}">
+        <thead>
+        <th ng-repeat="col in associate.columns" ng-if="col.type !== \'hidden\'">{{col.header}}</th>
+        </thead>
+        <tbody ng-click="associate.bodyClick($event)">
+        <tr ng-repeat="(rowIndex, row) in associate.source" data-row-index="{{rowIndex}}" ng-class="{\'selected\': selectedId !== undefined && selectedId === associate.getSelectedId(row),\'hover\':hoverId!==undefined&&hoverId==={{rowIndex}}}">
+            <td g-associate-grid-cell ng-repeat="(cellIndex, col) in associate.columns" ng-if="col.type !== \'hidden\'" data-cell-index="{{cellIndex}}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="paginate">
+        <a class="paginate-button previous ng-class:{\'disabled\': page === 1};" ng-click="page === 1 || associate.goPage(page -1)">&lt;</a>
+        <span class="paginate-button">{{page}}</span>
+        <a class="paginate-button next ng-class:{\'disabled\': page === totalPage || totalPage <= 1};" ng-click="(page === totalPage || totalPage <= 1) || associate.goPage(page +1)">&gt;</a>
+        <span style="float: right; margin-right: 10px;">共 <span ng-bind="totalPage"></span> 页</span>
+    </div>
+    <input type="hidden" ng-value="selectedId"/>
+</div>

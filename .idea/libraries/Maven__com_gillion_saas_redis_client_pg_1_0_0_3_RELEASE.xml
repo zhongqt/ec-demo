@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.gillion.saas:redis-client:pg:1.0.0.3.RELEASE">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/gillion/saas/redis-client/1.0.0.3.RELEASE/redis-client-1.0.0.3.RELEASE-pg.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/gillion/saas/redis-client/1.0.0.3.RELEASE/redis-client-1.0.0.3.RELEASE-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/gillion/saas/redis-client/1.0.0.3.RELEASE/redis-client-1.0.0.3.RELEASE-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

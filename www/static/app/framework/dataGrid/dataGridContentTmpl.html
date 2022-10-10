@@ -1,0 +1,21 @@
+<table class="table-body">
+    <tbody>
+    {{each source as record i}}
+    <tr data-row-index="{{i}}"
+        {{if enableEvenClass === 'true' && i % 2 !== 0}} class="table-body-tr-even"{{/if}}>
+        {{if grid.hasCheckbox}}
+            <td class="grid-col-checkbox">
+                <div class="form-clickbox" ng-click="toggleChecked()">
+                    <a href="javascript:void(0);" class="fi"></a>
+                </div>
+            </td>
+        {{/if}}
+        {{each columns as column j}}
+            <td data-cell-index="{{j}}" class="grid-{{grid.hash}}-col-{{j}}{{if column.align === 'center'}} align-center{{else if column.align === 'right'}} align-right{{else}} align-left{{/if}}">
+                <span data-role="display" ng-show="!(column.canEdit && grid.rowStates[rowIndex].editing)">{{record[column.data]}}</span>
+            </td>
+        {{/each}}
+        <td></td>
+    </tr>
+    {{/each}}
+</table>

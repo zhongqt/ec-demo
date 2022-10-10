@@ -1,0 +1,18 @@
+<div class="dataTables_wrapper">
+    <table class="dataTable cell-border compact">
+        <thead  ng-click="grid.headerClick($event)">
+        <th ng-if="grid.hasCheckbox"><input type="checkbox" ng-model="grid.allChecked" ng-change="grid.toggleAll()"/></th>
+        <th  ng-class="{sorting_asc:grid.sort.predicate===col.data&&grid.sort.reverse&&!grid.sort.notSort,sorting_desc:grid.sort.predicate===col.data&&!grid.sort.reverse&&!grid.sort.notSort,sorting:grid.predicate===col.data&&grid.sort.notSort}"  ng-repeat="col in grid.columns" ng-if="col.type !== \'hidden\'" data-column-mark="{{col.data}}">{{col.header}}</th>
+        </thead>
+        <tbody >
+        <tr ng-repeat="(rowIndex, row) in grid.source" data-row-index="{{rowIndex}}">
+            <th ng-if="grid.hasCheckbox" action="$grid-checkbox"><input type="checkbox" ng-model="row.checked" ng-change="grid.toggle()"/></th>
+            <td g-grid-cell ng-repeat="(cellIndex, col) in grid.columns" ng-if="col.type !== \'hidden\'" data-cell-index="{{cellIndex}}"></td>
+        </tr>
+        <tr ng-show="grid.displayNull">
+            <td colspan="{{grid.columns.length}}"><center>暂无数据!</center></td>
+        </tr>
+        </tbody>
+    </table>
+    <div ng-transclude></div>
+</div>

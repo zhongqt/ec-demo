@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>单位文本框</title>
+    <meta charset='utf-8'>
+    <link href='./marxico.css' rel='stylesheet'>
+</head>
+<body>
+  <div id='preview-contents' class='note-content'>
+    <div id="wmd-preview" class="preview-content"></div>
+    <div id="wmd-preview-section-27" class="wmd-preview-section preview-content"></div>
+    <div id="wmd-preview-section-114" class="wmd-preview-section preview-content">
+      <h1 id="单位文本框">单位文本框</h1>
+    </div>
+    <div id="wmd-preview-section-119" class="wmd-preview-section preview-content">
+      <h2 id="属性说明">属性说明</h2>
+      <table>
+        <thead>
+          <tr>
+            <th align="left">参数名</th>
+            <th align="left">含义</th>
+            <th align="left">是否必须</th>
+            <th align="left">说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td align="left">disabled</td>
+            <td align="left">是否禁用控件</td>
+            <td align="left">N</td>
+            <td align="left"></td>
+          </tr>
+          <tr>
+            <td align="left">g-unit</td>
+            <td align="left">控件名称</td>
+            <td align="left">Y</td>
+            <td align="left">如果只有后面的单位，可以不使用unit-after。把单位名称直接设在g-unit上(如:g-unit="$")</td>
+          </tr>
+          <tr>
+            <td align="left">unit-before</td>
+            <td align="left">单位放置前面</td>
+            <td align="left">N</td>
+            <td align="left">前面的单位名称(如:unit-before="kg")</td>
+          </tr>
+
+          <tr>
+            <td align="left">unit-after</td>
+            <td align="left">单位放置后面</td>
+            <td align="left">N</td>
+            <td align="left">后面的单位名称(如:g-unit="kg"),如果g-unit设了单位，再设unit-after的话。unit-after的单位会覆盖g-unit的单位。</td>
+          </tr>
+
+          <tr>
+            <td align="left">g-dbc</td>
+            <td align="left">全角转半角处理</td>
+            <td align="left">N</td>
+            <td align="left"></td>
+          </tr>
+          <tr>
+            <td align="left">g-numeric</td>
+            <td align="left">数字</td>
+            <td align="left">N</td>
+            <td align="left">属性allow-float:是否允许输入小数,allow-negative:是否允许输入负号,如需保留小数位，则和g-precision一起使用</td>
+          </tr>
+          <tr>
+            <td align="left">g-precision</td>
+            <td align="left">保留小数位数</td>
+            <td align="left">N</td>
+            <td align="left">属性：rounding舍入模式:false:四舍五入;true：截断;不设置(默认):四舍五入</td>
+          </tr>
+
+          <tr>
+            <td align="left">width</td>
+            <td align="left">设置文本框宽度</td>
+            <td align="left">N</td>
+            <td align="left">值:单位有%:百分比;in：英寸;cm：厘米;mm：毫米;pt:磅数;pc:12点活字;ex:字母高度的一半;em:字体高度;px：像素(默认)</td>
+          </tr>
+
+          <tr>
+            <td align="left">ng-model</td>
+            <td align="left">双向绑定</td>
+            <td align="left">N</td>
+            <td align="left"></td>
+          </tr>
+          <tr>
+            <td align="left">allow-show</td>
+            <td align="left">显示隐藏</td>
+            <td align="left">N</td>
+            <td align="left">值:true:显示，false:隐藏</td>
+          </tr>
+          <tr>
+            <td align="left">placeholder</td>
+            <td align="left">输入提示</td>
+            <td align="left">N</td>
+            <td align="left"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div id="wmd-preview-section-164" class="wmd-preview-section preview-content">
+      <h2 id="使用方式">使用方式</h2>
+    </div>
+    <div id="wmd-preview-section-230" class="wmd-preview-section preview-content">
+      <pre class="prettyprint hljs-dark"><code class="language-html hljs xml"> <span class="hljs-tag">&lt;<span class="hljs-title">input</span>
+       <span class="hljs-attribute">ng-model</span>=<span class="hljs-value">"text.value"</span>
+       <span class="hljs-attribute">width</span>=<span class="hljs-value">"500"</span>
+       <span class="hljs-attribute">g-dbc</span>
+       <span class="hljs-attribute">g-unit</span>=<span class="hljs-value">"kg"</span>
+       <span class="hljs-attribute">unit-before</span>=<span class="hljs-value">"$"</span>
+       <span class="hljs-attribute">unit-after</span>=<span class="hljs-value">"$"</span>
+       <span class="hljs-attribute">g-numeric</span>
+       <span class="hljs-attribute">allow-float</span>=<span class="hljs-value">"true"</span>
+       <span class="hljs-attribute">allow-negative</span>=<span class="hljs-value">"true"</span>
+       <span class="hljs-attribute">g-precision</span>=<span class="hljs-value">"2"</span>
+       <span class="hljs-attribute">rounding</span>=<span class="hljs-value">"false"</span>
+       <span class="hljs-attribute">allow-show</span>=<span class="hljs-value">"true"</span>
+       <span class="hljs-attribute">placeholder</span>=<span class="hljs-value">"输入提示"</span>
+       &gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-title">input</span>&gt;</span></code></pre>
+    </div>
+    <div id="wmd-preview-section-footnotes" class="preview-content"></div>
+  </div>
+</body>
+</html>

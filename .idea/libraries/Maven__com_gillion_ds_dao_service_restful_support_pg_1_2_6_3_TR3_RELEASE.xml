@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.gillion.ds:dao-service-restful-support:pg:1.2.6.3.TR3.RELEASE">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/gillion/ds/dao-service-restful-support/1.2.6.3.TR3.RELEASE/dao-service-restful-support-1.2.6.3.TR3.RELEASE-pg.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/gillion/ds/dao-service-restful-support/1.2.6.3.TR3.RELEASE/dao-service-restful-support-1.2.6.3.TR3.RELEASE-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/gillion/ds/dao-service-restful-support/1.2.6.3.TR3.RELEASE/dao-service-restful-support-1.2.6.3.TR3.RELEASE-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

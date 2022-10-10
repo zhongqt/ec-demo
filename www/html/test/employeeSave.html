@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/css/controls.css"/>
+    <script src="/bower_components/requirejs/require.js" data-main="/static/app" data-bootstrap-modules="['test/EmployeeSaveModule']"></script>
+
+    <title>表单校验</title>
+    <style>
+        [ng-cloak]{
+            display: none;
+        }
+    </style>
+</head>
+<body ng-controller="EmployeeSaveController">
+<form class="form-horizontal" name="EmployeeForm" g-validator="Employee_Save" data-invalid-msg="tooltipMessenger">
+    <!--唯一性校验前端需要带上主键-->
+    <input class="form-text col-md-3" type="hidden" name="id" ng-model="emp.id" />
+
+    用户名 :<input type="text" name="name" ng-model="emp.name"/><br>
+
+    密码 :<input type="password" name="password" ng-model="emp.password"/><br>
+
+    确认密码 :<input type="password" name="confirmPassword" ng-model="emp.confirmPassword"/><br>
+
+    年龄 :<input type="number" name="age" g-unit="岁" ng-model="emp.age"/><br>
+
+    邮箱 :<input type="text" name="email" ng-model="emp.email"/><br>
+
+    手机 :<input type="text" name="mobile" ng-model="emp.mobile"/><br>
+
+    学生名称 :<input type="text" name="studentName" ng-model="emp.student.studentName"/><br>
+
+    学生NM :<input type="text" name="studentNm" ng-model="emp.student.studentNm"/><br>
+
+    <button type="button" ng-click="saveEmp()">提交</button>
+</form>
+<g-date width="200"></g-date>
+</body>
+</html>

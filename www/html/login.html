@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="/static/css/controls.css"/>
+    <script>var ctx = ''; </script>
+    <script src="/bower_components/requirejs/require.js" data-main="/static/app.js" data-bootstrap-modules="'system/LoginModule'" async="true"></script>
+    <style>
+        [ng-cloak], [g-per] {
+            display: none;
+        }
+
+        div {
+            margin: 10px;
+        }
+    </style>
+</head>
+<body ng-controller="LoginController">
+<div ng-cloak>
+
+    <form name="LoginForm" method="post">
+        <div class="col-md-12">
+            <lable>用户名： <input type="text" ng-model="loginUser.username"/></lable>
+        </div>
+        <div class="col-md-12">
+            <lable>密码： <input type="text" ng-model="loginUser.password"/></lable>
+        </div>
+        <div class="col-md-12">
+            <button type="button" ng-click="login()"> 登录</button>
+            <button type="button" ng-click="logout()"> 注销</button>
+
+        </div>
+    </form>
+
+</div>
+
+</body>
+</html>

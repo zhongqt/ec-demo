@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>语言国际化</title>
+    <!--控件样式-->
+    <link href="/static/css/controls.css" rel="stylesheet" type="text/css">
+    <!--初始化语言-->
+    <script>
+        var locale='zh-cn';
+        localStorage.setItem('locale',locale);
+    </script>
+    <script src="/bower_components/requirejs/require.js" data-main="/static/app.js" data-bootstrap-modules="'test/i18nModule'"></script>
+</head>
+<body ng-controller="i18nController">
+
+<div class="section" style="padding: 80px">
+    <div class="section_header">
+        多语言切换：
+    </div>
+    <div  style="padding-top: 50px">
+        <g-dropdown  ng-model="currentLanguage" on-select="selectItem(item)" width="200" list-type="single">
+            <g-dropitem value="zh-cn">中文</g-dropitem>
+            <g-dropitem value="en-us">英文</g-dropitem>
+            <g-dropitem value="jp">日语</g-dropitem>
+
+        </g-dropdown>
+    </div>
+    <div  style="padding-top: 30px">
+         <button ng-click="login()">登录</button>
+    </div>
+</div>
+
+</body>
+</html>

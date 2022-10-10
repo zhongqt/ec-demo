@@ -1,0 +1,7 @@
+<span>
+    <label ng-repeat="element in source">
+        <input type="checkbox" ng-checked="checked"
+                ng-click="toggle(element)"/> {{displayGetter(element)}} &nbsp;&nbsp;
+    </label>
+    <input type="hidden" name="{{submitName}}"/>
+</span>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>星级控件</title>
+    <meta charset='utf-8'>
+    <link href='./marxico.css' rel='stylesheet'>
+</head>
+<body>
+  <div id='preview-contents' class='note-content'>
+    <div id="wmd-preview" class="preview-content"></div>
+    <div id="wmd-preview-section-27" class="wmd-preview-section preview-content"></div>
+    <div id="wmd-preview-section-114" class="wmd-preview-section preview-content">
+      <h1 id="星级控件">星级控件</h1>
+    </div>
+    <div id="wmd-preview-section-119" class="wmd-preview-section preview-content">
+      <h2 id="属性说明">属性说明</h2>
+      <table>
+        <thead>
+          <tr>
+            <th align="left">参数名</th>
+            <th align="left">含义</th>
+            <th align="left">是否必须</th>
+            <th align="left">说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td align="left">disabled</td>
+            <td align="left">是否禁用控件</td>
+            <td align="left">N</td>
+            <td align="left">控制元素是否禁用。disabled:只要设有此属性则为禁用。不设此属性为启用。</td>
+          </tr>
+
+          <tr>
+            <td align="left">readonly</td>
+            <td align="left">只读</td>
+            <td align="left">N</td>
+            <td align="left">设置为true时，为只读控件，不可点击。可以通过ng-model来改变</td>
+          </tr>
+
+          <tr>
+            <td align="left">ng-model</td>
+            <td align="left">双向绑定</td>
+            <td align="left">N</td>
+            <td align="left"></td>
+          </tr>
+          <tr>
+            <td align="left">ng-show</td>
+            <td align="left">显示隐藏</td>
+            <td align="left">N</td>
+            <td align="left">值:true:显示，false:隐藏</td>
+          </tr>
+          <tr>
+            <td align="left">class-name</td>
+            <td align="left">额外样式</td>
+            <td align="left">N</td>
+            <td align="left">添加到控件上的额外样式</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div id="wmd-preview-section-164" class="wmd-preview-section preview-content">
+      <h2 id="使用方式">使用方式</h2>
+    </div>
+    <div id="wmd-preview-section-230" class="wmd-preview-section preview-content">
+      <pre class="prettyprint hljs-dark"><code class="language-html hljs xml"> <span class="hljs-tag">&lt;<span class="hljs-title">g-star</span>
+       <span class="hljs-attribute">ng-model</span>=<span class="hljs-value">"star.value"</span>
+       <span class="hljs-attribute">class-name</span>=<span class="hljs-value">"class"</span>
+       <span class="hljs-attribute">disabled</span>=<span class="hljs-value">"disabled"</span>
+       <span class="hljs-attribute">readonly</span>=<span class="hljs-value">"true"</span>
+       <span class="hljs-attribute">ng-show</span>=<span class="hljs-value">"true"</span>
+       &gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-title">g-star</span>&gt;</span></code></pre>
+    </div>
+    <div id="wmd-preview-section-footnotes" class="preview-content"></div>
+  </div>
+
+</body>
+</html>

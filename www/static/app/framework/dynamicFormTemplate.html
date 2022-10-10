@@ -1,0 +1,6 @@
+<div class="form-group" ng-repeat="rowIndex in getRowRange()">
+    <span ng-repeat="control in controls.slice(rowIndex * colCount, getRowLimit(rowIndex))">
+        <label for="{{control.boAttributeName}}" class="col-sm-1 control-label">{{control.displayLabel}}</label>
+        <div class="col-sm-{{controlWidth}}" g-dynamic-control></div>
+    </span>
+</div>

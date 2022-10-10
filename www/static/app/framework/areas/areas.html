@@ -1,0 +1,54 @@
+<div class="form-region" ng-click="$event.stopPropagation()">
+    <ul class="form-region-search" ng-show="areas.searching === true">
+        <li ng-repeat="area in areas.foundAreas" ng-click="areas.deepSelect($event, area.code)">{{areas.getDisplayPath(area.code)}}</li>
+    </ul>
+    <div class="form-region-menu" ng-show="areas.selection === true">
+        <ul class="form-region-tabs"ng-click="toggleAreaGroup($event)">
+            <li selected="selected" data-area-group="common" selected>热门城市</li>
+            <li data-area-group="province">省份</li>
+            <li disabled="disabled" data-area-group="city" disabled>城市</li>
+            <li disabled="disabled" data-area-group="county" disabled>县区</li>
+        </ul>
+        <ul class="form-region-hot" ng-show="areas.activeTab === \'common\'">
+            <li ng-repeat="area in areas.commonAreas" ng-attr-active="{{areas.selectedArea.c === area.c}}" ng-click="areas.deepSelect($event, area.c)">{{area.n}}</li>
+        </ul>
+        <div class="form-region-body" ng-show="areas.activeTab === \'province\'">
+            <button class="btn form-region-btn" ng-click="areas.provinceGoPage(-1)">
+                <i class="fi fi-arrow-left"></i>
+            </button>
+            <div class="form-region-province">
+                <div class="form-region-province-group" ng-repeat="provinceGroup in areas.provinceGroupPage">
+                    <span class="form-region-province-groupname"> {{provinceGroup.range}} </span>
+                    <ul class="form-region-province-items">
+                        <li ng-repeat="province in provinceGroup.provinces" ng-click="areas.select($event, province.c)">{{province.n}}</li>
+                    </ul>
+                </div>
+            </div>
+            <button class="btn form-region-btn" ng-click="areas.provinceGoPage(1)">
+                <i class="fi fi-arrow-right"></i>
+            </button>
+        </div>
+        <div class="form-region-body" ng-show="areas.activeTab === \'city\'">
+            <button class="btn form-region-btn" ng-click="areas.cityGoPage(-1)">
+                <i class="fi fi-arrow-left"></i>
+            </button>
+            <ul class="form-region-citys">
+                <li ng-repeat="city in areas.cities" ng-class="{\'active\':areas.selectedArea.c === city.c}" ng-click="areas.select($event, city.c)">{{city.n}}</li>
+            </ul>
+            <button class="btn form-region-btn" ng-click="areas.cityGoPage(1)">
+                <i class="fi fi-arrow-right"></i>
+            </button>
+        </div>
+        <div class="form-region-body" ng-show="areas.activeTab === \'county\'">
+            <button class="btn form-region-btn" ng-click="areas.cityGoPage(-1)">
+                <i class="fi fi-arrow-left"></i>
+            </button>
+            <ul class="form-region-citys">
+                <li ng-repeat="county in areas.counties" ng-class="{\'active\':areas.selectedArea.c === county.c}" ng-click="areas.select($event, county.c)">{{county.n}}</li>
+            </ul>
+            <button class="btn form-region-btn" ng-click="areas.cityGoPage(1)">
+                <i class="fi fi-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+</div>

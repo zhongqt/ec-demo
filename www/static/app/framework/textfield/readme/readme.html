@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>文体框</title>
+    <meta charset='utf-8'>
+    <link href='./marxico.css' rel='stylesheet'>
+</head>
+<body>
+  <div id='preview-contents' class='note-content'>
+    <div id="wmd-preview" class="preview-content"></div>
+    <div id="wmd-preview-section-27" class="wmd-preview-section preview-content"></div>
+    <div id="wmd-preview-section-114" class="wmd-preview-section preview-content">
+      <h1 id="文本框">文件框</h1>
+    </div>
+    <div id="wmd-preview-section-119" class="wmd-preview-section preview-content">
+      <h2 id="属性说明">属性说明</h2>
+      <table>
+        <thead>
+          <tr>
+            <th align="left">参数名</th>
+            <th align="left">含义</th>
+            <th align="left">是否必须</th>
+            <th align="left">说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td align="left">disabled</td>
+            <td align="left">是否禁用控件</td>
+            <td align="left">N</td>
+            <td align="left"></td>
+          </tr>
+          <tr>
+            <td align="left">g-case</td>
+            <td align="left">大小写转换处理</td>
+            <td align="left">N</td>
+            <td align="left">值:upper:小写转大写,lower:大写转小写</td>
+          </tr>
+          <tr>
+            <td align="left">g-dbc</td>
+            <td align="left">全角转半角处理</td>
+            <td align="left">N</td>
+            <td align="left"></td>
+          </tr>
+          <tr>
+            <td align="left">g-height</td>
+            <td align="left">设置文本框高度</td>
+            <td align="left">N</td>
+            <td align="left">值:单位有%:百分比;in：英寸;cm：厘米;mm：毫米;pt:磅数;pc:12点活字;ex:字母高度的一半;em:字体高度;px：像素(默认)</td>
+          </tr>
+
+          <tr>
+            <td align="left">g-numeric</td>
+            <td align="left">数字</td>
+            <td align="left">N</td>
+            <td align="left">属性allow-float:是否允许输入小数,allow-negative:是否允许输入负号,如需保留小数位，则和g-precision一起使用</td>
+          </tr>
+          <tr>
+            <td align="left">g-precision</td>
+            <td align="left">保留小数位数</td>
+            <td align="left">N</td>
+            <td align="left">属性：rounding舍入模式:false:四舍五入;true：截断;不设置(默认):四舍五入</td>
+          </tr>
+          <tr>
+            <td align="left">g-trim</td>
+            <td align="left">去空格</td>
+            <td align="left">N</td>
+            <td align="left">值：ltrim:去除左边空格;rtrim:去除右边空格;trim(默认值):去除左右空格。</td>
+          </tr>
+
+          <tr>
+            <td align="left">g-width</td>
+            <td align="left">设置文本框宽度</td>
+            <td align="left">N</td>
+            <td align="left">值:单位有%:百分比;in：英寸;cm：厘米;mm：毫米;pt:磅数;pc:12点活字;ex:字母高度的一半;em:字体高度;px：像素(默认)</td>
+          </tr>
+
+          <tr>
+            <td align="left">ng-model</td>
+            <td align="left">双向绑定</td>
+            <td align="left">N</td>
+            <td align="left"></td>
+          </tr>
+          <tr>
+            <td align="left">ng-show</td>
+            <td align="left">显示隐藏</td>
+            <td align="left">N</td>
+            <td align="left">值:true:显示，false:隐藏</td>
+          </tr>
+          <tr>
+            <td align="left">placeholder</td>
+            <td align="left">输入提示</td>
+            <td align="left">N</td>
+            <td align="left"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div id="wmd-preview-section-164" class="wmd-preview-section preview-content">
+      <h2 id="使用方式">使用方式</h2>
+    </div>
+    <div id="wmd-preview-section-230" class="wmd-preview-section preview-content">
+      <pre class="prettyprint hljs-dark"><code class="language-html hljs xml"> <span class="hljs-tag">&lt;<span class="hljs-title">input</span>
+       <span class="hljs-attribute">ng-model</span>=<span class="hljs-value">"text.value"</span>
+       <span class="hljs-attribute">g-width</span>=<span class="hljs-value">"600px"</span>
+       <span class="hljs-attribute">g-height</span>=<span class="hljs-value">"30px"</span>
+       <span class="hljs-attribute">g-dbc</span>
+       <span class="hljs-attribute">g-numeric</span>
+       <span class="hljs-attribute">allow-float</span>=<span class="hljs-value">"true"</span>
+       <span class="hljs-attribute">allow-negative</span>=<span class="hljs-value">"true"</span>
+       <span class="hljs-attribute">g-precision</span>=<span class="hljs-value">"2"</span>
+       <span class="hljs-attribute">rounding</span>=<span class="hljs-value">"false"</span>
+       <span class="hljs-attribute">g-trim</span>=<span class="hljs-value">"trim"</span>
+       <span class="hljs-attribute">ng-show</span>=<span class="hljs-value">"true"</span>
+       <span class="hljs-attribute">placeholder</span>=<span class="hljs-value">"输入提示"</span>
+       &gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-title">input</span>&gt;</span></code></pre>
+    </div>
+    <div id="wmd-preview-section-footnotes" class="preview-content"></div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.gillion.utilities.ds:dao-service-utilities:shaded:1.0.2.40.RELEASE">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/gillion/utilities/ds/dao-service-utilities/1.0.2.40.RELEASE/dao-service-utilities-1.0.2.40.RELEASE-shaded.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/gillion/utilities/ds/dao-service-utilities/1.0.2.40.RELEASE/dao-service-utilities-1.0.2.40.RELEASE-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/gillion/utilities/ds/dao-service-utilities/1.0.2.40.RELEASE/dao-service-utilities-1.0.2.40.RELEASE-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

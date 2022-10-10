@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/ec-demo.iml" filepath="$PROJECT_DIR$/ec-demo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ec-demo-api/ec-demo-api.iml" filepath="$PROJECT_DIR$/ec-demo-api/ec-demo-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ec-demo-business/ec-demo-business.iml" filepath="$PROJECT_DIR$/ec-demo-business/ec-demo-business.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ec-demo-parent/ec-demo-parent.iml" filepath="$PROJECT_DIR$/ec-demo-parent/ec-demo-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ec-demo3.iml" filepath="$PROJECT_DIR$/ec-demo3.iml" />
+    </modules>
+  </component>
+</project>

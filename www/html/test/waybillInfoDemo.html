@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>导入导出</title>
+</head>
+<body>
+
+</body>
+<div class="col-md-12">
+    <div class="col-md-6">
+        <div class="col-md-12" style="min-height:300px;">
+            <button class="btn-default col-md-12" onclick="runCommand('importFile')" style="width:80px" type="button">
+                导入
+            </button>
+            <textarea class="col-md-12" cols="100%" id="importFile" name="selectCode" style="min-height:300px;">
+            </textarea>
+        </div>
+        <div class="col-md-12" style="min-height:300px;">
+            <button class="btn-default col-md-12" onclick="runCommand('exportFile')" style="width:80px" type="button">
+                导出
+            </button>
+            <textarea class="col-md-12" cols="100%" id="exportFile" name="selectCode" style="min-height:300px;">
+            </textarea>
+        </div>
+        <div class="col-md-12" style="min-height:300px;">
+            <button class="btn-default col-md-12" onclick="runCommand('exportFileAsync')" style="width:80px"
+                    type="button">
+                异步导出
+            </button>
+            <textarea class="col-md-12" cols="100%" id="exportFileAsync" name="selectCode" style="min-height:300px;">
+            </textarea>
+        </div>
+        <div class="col-md-12" style="min-height:30px;">
+            <button class="btn-default col-md-12" onclick="runCommand('downloadFileAsync')" style="width:80px"
+                    type="button">
+                异步导出文件下载
+            </button>
+            <textarea class="col-md-12" cols="100%" id="downloadFileAsync" name="selectCode" style="min-height:300px;">
+            </textarea>
+        </div>
+        <div class="col-md-12" style="min-height:300px;">
+            <button class="btn-default col-md-12" onclick="runCommand('exportFileByCustomSql')" style="width:80px"
+                    type="button">
+                自定义sql导出
+            </button>
+            <textarea class="col-md-12" cols="100%" id="exportFileByCustomSql" name="selectCode"
+                      style="min-height:300px;">
+            </textarea>
+        </div>
+    </div>
+    <div class="col-md-6" style="min-height:500px">
+        <pre id="getResult"></pre>
+    </div>
+</div>
+
+
+<link href="../../static/css/controls.css" rel="stylesheet" type="text/css">
+<link href="../../bower_components/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<script src="../../bower_components/jquery/dist/jquery.min.js"></script>
+<script src="../../static/app/daoService/ModelGraph.js"></script>
+<script src="../../static/app/daoService/Uploader.js"></script>
+<script src="../../static/app/daoService/DaoServiceClient.js"></script>
+<script type="application/javascript">
+  this.ds.client.config({
+    serverUrl: 'http://localhost:80/ec-demo/',
+    projectKey: 'daoservice-quickstart',
+    serviceCode: 'DS_OWN',
+    excelImportConfig: {
+      filter: 'csv,xls,xlsx',              // 文件类型过滤器
+      maxsize: 10,                         // 文件上传大小限制，单位：M
+    },
+  });
+
+  var dsc = ds.client,
+      waybillInfo = ds.QWaybillInfo.using(ds.client),
+      waybillFee = ds.QWaybillFee.using(ds.client),
+      student=ds.QStudent.using(ds.client),
+      ___ = dsc.___;
+  var Days = 30;
+  var exp = new Date();
+  exp.setTime(exp.getTime() + Days * 24 * 60 * 60 * 1000);
+  document.cookie = 'access_token=' + escape(
+      'eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1Njg5NjIzMTQsImV4cCI6MTU2ODk5MTExNCwic3ViIjoie1xuICBcInVzZXJJZFwiIDogXCJhMWZlNTU2ODFmNmQ0NGZjOTAxNWI3NDg3N2ZkM2Y4OVwiLFxuICBcInBhc3N3b3JkXCIgOiBcIjI1ZDU1YWQyODNhYTQwMGFmNDY0Yzc2ZDcxM2MwN2FkXCIsXG4gIFwidXNlckNvZGVcIiA6IFwiQTAwMVwiLFxuICBcInVzZXJOYW1lQ25cIiA6IFwiQeeUqOaIt1VTRVIxXCIsXG4gIFwiY2xpZW50SXBcIiA6IFwiXCIsXG4gIFwiYXBwSWRcIiA6IFwiXCIsXG4gIFwiYXBwQ29kZVwiIDogbnVsbCxcbiAgXCJvZmZpY2VJZFwiIDogXCIzNWQyMDk5NTM0YzI0ZGNmYTYyOTMzYjkxZjA3NjU5M1wiLFxuICBcInN5c1JvbGVJZFwiIDogXCI4MGZlZWE2YzhhNzU0YTc2ODU1Mzg3ODZkMjlhNjI1NFwiLFxuICBcIm9mZmljZU5hbWVcIiA6IFwiQee9keeCuVwiLFxuICBcInJvbGVJZHNcIiA6IFsgXCI4MGZlZWE2YzhhNzU0YTc2ODU1Mzg3ODZkMjlhNjI1NFwiLCBcIjkwN2Y3MzI0NWFmYjQyNmQ5OGZiNjhjMmIyMmVhNGFhXCIsIFwieHlhcHBhODc0ZDIzZGY1NzAxNGQyM2UyYmRhNDAwMDFcIiBdLFxuICBcInBhc3N3b3JkTW9kaWZ5VGltZVwiIDogbnVsbCxcbiAgXCJpc1Bhc3N3b3JkTW9kaWZ5XCIgOiBudWxsLFxuICBcInVzZXJuYW1lXCIgOiBcIkEwMDFcIixcbiAgXCJkZXB0T2ZmaWNlQ29kZVwiIDogXCJcIixcbiAgXCJkZXB0T2ZmaWNlTmFtZVwiIDogXCJcIixcbiAgXCJzZXR0bGVPZmZpY2VDb2RlXCIgOiBudWxsLFxuICBcInNldHRsZU9mZmljZU5hbWVcIiA6IFwiXCIsXG4gIFwicm9sZU9mZmljZU5hbWVcIiA6IG51bGwsXG4gIFwicm9sZU9mZmljZUNvZGVcIiA6IG51bGwsXG4gIFwicm9sZU9mZmljZUlkXCIgOiBudWxsLFxuICBcIm9mZmljZUNvZGVcIiA6IFwiV0EwMDFcIixcbiAgXCJ1c2VyQ29va2llS2V5XCIgOiBcImExZmU1NTY4MWY2ZDQ0ZmM5MDE1Yjc0ODc3ZmQzZjg5X251bGxcIixcbiAgXCJkYXRhQXV0aG9yaXR5SWRcIiA6IFwiXCIsXG4gIFwicHJpbmNpcGFsR3JvdXBDb2RlXCIgOiBcIjJcIixcbiAgXCJvZmZpY2VUeXBlXCIgOiBcIjVcIixcbiAgXCJtYW5hZ2VUeXBlXCIgOiBcIjZcIixcbiAgXCJlbmFibGVkXCIgOiBmYWxzZSxcbiAgXCJhdXRob3JpdGllc1wiIDogbnVsbCxcbiAgXCJhY2NvdW50Tm9uRXhwaXJlZFwiIDogZmFsc2UsXG4gIFwiYWNjb3VudE5vbkxvY2tlZFwiIDogZmFsc2UsXG4gIFwiY3JlZGVudGlhbHNOb25FeHBpcmVkXCIgOiBmYWxzZVxufSJ9.qabf8Q7ZDdQBXpKWfcyUUhb2oBux6VfdSE7AK1BgonU') +
+      ';expires=' + exp.toGMTString() + ';path=/';
+
+  function runCommand(sign) {
+    var code;
+    code = document.getElementById(sign).value;
+    var func = new Function(code);
+    func();
+  }
+
+  function callable(data) {
+    document.getElementById('getResult').innerText = JSON.stringify(data, null, 4);
+  }
+
+  function onFileUploadOk(data) {
+    //alert(JSON.stringify(data, null, 4));
+    document.getElementById('getResult').innerText = JSON.stringify(data, null, 4);
+  }
+
+  function onFileUploadFail(data) {
+    //alert(JSON.stringify(data, null, 4));
+    document.getElementById('getResult').innerText = JSON.stringify(data, null, 4);
+  }
+
+  window.onload = function() {
+
+    //同步导出，揽收时间降序
+    document.getElementById('exportFile').value = 'dsc.withModel(waybillInfo)         \n' +
+        '    .forExport(waybillInfo.collectEmployeeMobile,\n' +
+        '            waybillInfo.consigneeCname,\n' +
+        '            waybillInfo.consigneeMobile,\n' +
+        '            waybillInfo.deliveryAreaCode,\n' +
+        '            waybillInfo.collectEmployeeCname,\n' +
+        '            waybillInfo.shipperMobile,\n' +
+        '            waybillInfo.productTypeCode,\n' +
+        '            waybillInfo.collectDatetime,\n' +
+        '            waybillInfo.shipperCname, \n' +
+        '            waybillInfo.sendAreaCode,\n' +
+        '            waybillInfo.sendAddressDetail,\n' +
+        '            waybillInfo.deliveryAddressDetail,\n' +
+        '            waybillInfo.waybillFee.chain(waybillFee.totalFreight),\n' +
+        '            waybillInfo.waybillFee.chain(waybillFee.weight),\n' +
+        '            waybillInfo.waybillFee.chain(waybillFee.insuranceFee),\n' +
+        '            waybillInfo.waybillFee.chain(waybillFee.volume))\n' +
+        '    .async(false)\n' +
+        '    .where(waybillInfo.consigneeCname.like$("赵%"))\n' +
+        '    .sorting(waybillInfo.collectDatetime.desc())\n' +
+        '    .tag("export_waybill_info")\n' +
+        '    .execute(this.callable);';
+
+    document.getElementById('exportFileAsync').value = 'dsc.withModel(waybillInfo)         \n' +
+        '    .forExport(waybillInfo.collectEmployeeMobile,\n' +
+        '            waybillInfo.consigneeCname,\n' +
+        '            waybillInfo.consigneeMobile,\n' +
+        '            waybillInfo.deliveryAreaCode,\n' +
+        '            waybillInfo.collectEmployeeCname,\n' +
+        '            waybillInfo.shipperMobile,\n' +
+        '            waybillInfo.productTypeCode,\n' +
+        '            waybillInfo.collectDatetime,\n' +
+        '            waybillInfo.shipperCname, \n' +
+        '            waybillInfo.sendAreaCode,\n' +
+        '            waybillInfo.sendAddressDetail,\n' +
+        '            waybillInfo.deliveryAddressDetail,\n' +
+        '            waybillInfo.waybillFee.chain(waybillFee.totalFreight),\n' +
+        '            waybillInfo.waybillFee.chain(waybillFee.weight),\n' +
+        '            waybillInfo.waybillFee.chain(waybillFee.insuranceFee),\n' +
+        '            waybillInfo.waybillFee.chain(waybillFee.volume))\n' +
+        '    .async(true)\n' +
+        '    .where(waybillInfo.consigneeCname.like$("赵%"))\n' +
+        '    .tag("export_waybill_info_async")\n' +
+        '    .execute(this.callable);';
+
+    document.getElementById('downloadFileAsync').value = 'dsc.downloadFile()\n' +
+        '    .exportFileId(\'46af3c05e7e8496ca6a9049c1383bdc4\')\n' +
+        '    .execute();';
+
+    document.getElementById('exportFileByCustomSql').value = 'dsc.forCustomExport() \n' +
+        '    .async(false)\n' +
+        '    .customSqlKey("export_waybill_info_custom_sql")\n' +
+        '    .execute({"sendAddressDetail":"宁汉市"});';
+
+    document.getElementById('importFile').value = 'dsc.forImport()\n' +
+        '         .tag("import_waybill_info_test")\n' +
+        '         .execute(onFileUploadOk, onFileUploadFail);';
+  };
+</script>
+</html>

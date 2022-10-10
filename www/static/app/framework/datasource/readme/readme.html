@@ -1,0 +1,481 @@
+<!DOCTYPE html><html><head><title>数据源控件</title><meta charset='utf-8'><link href='./marxico.css' rel='stylesheet'></head><body><div id='preview-contents' class='note-content'>
+                        <div id="wmd-preview" class="preview-content"></div>
+                    <div id="wmd-preview-section-6" class="wmd-preview-section preview-content">
+
+</div><div id="wmd-preview-section-7" class="wmd-preview-section preview-content">
+
+<h1 id="数据源控件">数据源控件</h1>
+
+</div><div id="wmd-preview-section-8" class="wmd-preview-section preview-content">
+
+<h2 id="配置参数">配置参数</h2>
+
+<p>数据源一共分为两种，一种是普通数据源，一种是分页数据源，通过在标签上</p>
+
+</div><div id="wmd-preview-section-9" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-html hljs xml">    <span class="hljs-tag">&lt;<span class="hljs-title">g-data-source</span> <span class="hljs-attribute">page</span>=<span class="hljs-value">"true"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-title">g-data-source</span>&gt;</span></code></pre>
+
+<p>配置page来进行区分。</p>
+
+</div><div id="wmd-preview-section-1345" class="wmd-preview-section preview-content">
+
+<h3 id="普通数据源">普通数据源</h3>
+
+<p>普通数据源需要配置以下参数：</p>
+
+<table>
+<thead>
+<tr>
+  <th align="left">参数名</th>
+  <th align="left">含义</th>
+  <th align="center">是否必须</th>
+  <th align="left">备注</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="left">url</td>
+  <td align="left">数据源请求地址</td>
+  <td align="center">Y</td>
+  <td align="left"></td>
+</tr>
+<tr>
+  <td align="left">source-name</td>
+  <td align="left">数据源名称</td>
+  <td align="center">Y</td>
+  <td align="left"></td>
+</tr>
+<tr>
+  <td align="left">page</td>
+  <td align="left">是否是分页数据源，默认为false</td>
+  <td align="center">N</td>
+  <td align="left">值：true,false</td>
+</tr>
+<tr>
+  <td align="left">params</td>
+  <td align="left">请求参数</td>
+  <td align="center">N</td>
+  <td align="left">params在进行修改后，会自动刷新后台数据源,可为一个函数</td>
+</tr>
+<tr>
+  <td align="left">records-prop</td>
+  <td align="left">绑定的数据字段名称</td>
+  <td align="center">N</td>
+  <td align="left">在http请求响应后，绑定到响应数据上的一个属性值</td>
+</tr>
+<tr>
+  <td align="left">allow-auto-load</td>
+  <td align="left">是否自动加载</td>
+  <td align="center">N</td>
+  <td align="left">默认为：false，若设置为true，则分页或其他参数改变时，会自动加载数据，若为false，则需要自己手动调用doRequestData方法进行加载</td>
+</tr>
+</tbody></table>
+</div><div id="wmd-preview-section-1316" class="wmd-preview-section preview-content">
+
+<h3 id="分页数据源">分页数据源</h3>
+
+<table>
+<thead>
+<tr>
+  <th align="left">参数名</th>
+  <th align="left">含义</th>
+  <th align="center">是否必须</th>
+  <th align="left">备注</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="left">url</td>
+  <td align="left">数据源请求地址</td>
+  <td align="center">Y</td>
+  <td align="left"></td>
+</tr>
+<tr>
+  <td align="left">source-name</td>
+  <td align="left">数据源名称</td>
+  <td align="center">Y</td>
+  <td align="left"></td>
+</tr>
+<tr>
+  <td align="left">page</td>
+  <td align="left">是否是分页数据源，默认为false</td>
+  <td align="center">N</td>
+  <td align="left">值：true,false，true为分页数据源</td>
+</tr>
+<tr>
+  <td align="left">params</td>
+  <td align="left">请求参数</td>
+  <td align="center">N</td>
+  <td align="left">params在进行修改后，会自动刷新后台数据源，当前页面自动修改为1,可为一个函数</td>
+</tr>
+<tr>
+  <td align="left">page-size</td>
+  <td align="left">分页大小</td>
+  <td align="center">N</td>
+  <td align="left">默认为10页，修改后，修改后自动更新数据源，当前页面自动修改为1</td>
+</tr>
+<tr>
+  <td align="left">current-page</td>
+  <td align="left">当前页</td>
+  <td align="center">N</td>
+  <td align="left">默认为1，修改后自动更新数据源</td>
+</tr>
+<tr>
+  <td align="left">sort-name</td>
+  <td align="left">排序字段名称</td>
+  <td align="center">N</td>
+  <td align="left">修改后自动更新数据源</td>
+</tr>
+<tr>
+  <td align="left">sort-direction</td>
+  <td align="left">排序方向</td>
+  <td align="center">N</td>
+  <td align="left">值为ASC或DESC，修改后自动更新数据源</td>
+</tr>
+<tr>
+  <td align="left">total-record-prop</td>
+  <td align="left">总记录数量字段名称</td>
+  <td align="center">N</td>
+  <td align="left">默认为：totalRecord后台响应时，自动根据配置的字段名称，更新总记录数量</td>
+</tr>
+<tr>
+  <td align="left">records-prop</td>
+  <td align="left">绑定的数据字段名称，默认为records</td>
+  <td align="center">N</td>
+  <td align="left">在http请求响应后，绑定到响应数据上的一个属性值</td>
+</tr>
+<tr>
+  <td align="left">page-size-param</td>
+  <td align="left">分页大小字段名称</td>
+  <td align="center">N</td>
+  <td align="left">默认为：pageSize,在进行请求时，会根据配置的page-size-field发送对应的请求参数</td>
+</tr>
+<tr>
+  <td align="left">current-page-param</td>
+  <td align="left">当前页字段名称</td>
+  <td align="center">N</td>
+  <td align="left">默认为：currentPage，在进行请求时，会根据配置的current-page-field发送对应的请求参数</td>
+</tr>
+<tr>
+  <td align="left">sort-name-param</td>
+  <td align="left">排序字段接收参数名称</td>
+  <td align="center">N</td>
+  <td align="left">默认为：sortName,在进行请求时，会根据配置的sort-name-param发送对应的请求参数</td>
+</tr>
+<tr>
+  <td align="left">sort-direction-param</td>
+  <td align="left">排序方向接收参数名称</td>
+  <td align="center">N</td>
+  <td align="left">默认为：sortDirection，在进行请求时，会根据配置的sort-direction-param发送对应的请求参数</td>
+</tr>
+<tr>
+  <td align="left">more-attrs-prop</td>
+  <td align="left">额外数据</td>
+  <td align="center">N</td>
+  <td align="left">默认为：moreAttrs,在响应时，会根据配置的more-attrs自动注入数据</td>
+</tr>
+<tr>
+  <td align="left">allow-auto-load</td>
+  <td align="left">是否自动加载</td>
+  <td align="center">N</td>
+  <td align="left">默认为：false，若设置为true，则分页或其他参数改变时，会自动加载数据，若为false，则需要自己手动调用doRequestData方法进行加载</td>
+</tr>
+</tbody></table>
+</div><div id="wmd-preview-section-12" class="wmd-preview-section preview-content">
+
+<h2 id="controller与控件中对数据源的调用方式">controller与控件中对数据源的调用方式</h2>
+
+<p>在controller中，若要调用数据源，则需要使用以下步骤</p>
+
+<ol><li>注入$dataSourceManager服务</li>
+<li>使用$dataSourceManager根据不同的数据源名称获取数据源，在promise中进行操作</li>
+</ol>
+
+<p>以下给出一个例子，具体内容如下：</p>
+
+<p>1.HTML中，注册一个数据源</p>
+
+</div><div id="wmd-preview-section-13" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-html hljs xml"><span class="hljs-tag">&lt;<span class="hljs-title">g-data-source</span> 
+    <span class="hljs-attribute">url</span>=<span class="hljs-value">"/sebusiness/student"</span> 
+    <span class="hljs-attribute">page-size</span>=<span class="hljs-value">"10"</span> 
+    <span class="hljs-attribute">current-page</span>=<span class="hljs-value">"1"</span> 
+    <span class="hljs-attribute">data-params</span>=<span class="hljs-value">"testParams"</span>  
+    <span class="hljs-attribute">data-source-name</span>=<span class="hljs-value">"source1"</span>
+    <span class="hljs-attribute">page</span>=<span class="hljs-value">"true"</span>
+    &gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-title">g-data-source</span>&gt;</span></code></pre>
+
+<p>2.在controller中使用数据源</p>
+
+</div><div id="wmd-preview-section-14" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-javascript hljs">TestDataSourceModule.controller(<span class="hljs-string">"DSController"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">($scope, $dataSourceManager)</span> </span>{
+      $dataSourceManager.getDataSource(<span class="hljs-string">"source1"</span>).then(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(dataSource)</span> </span>{
+        $scope.nextPage = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+          dataSource.currentPage = dataSource.currentPage + <span class="hljs-number">1</span>;
+        };
+        $scope.setParams = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+          <span class="hljs-keyword">return</span> dataSource.params = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+            <span class="hljs-keyword">return</span> {
+              name: <span class="hljs-string">"hello "</span>
+            };
+          };
+        };
+        <span class="hljs-keyword">return</span> $scope.setPageSize = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+          dataSource.pageSize = <span class="hljs-number">20</span>;
+        };
+      });
+    });</code></pre>
+
+<p>在控件中的使用：</p>
+
+</div><div id="wmd-preview-section-15" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-javascript hljs">TestDataSourceModule.directive(<span class="hljs-string">"gTestDataSource"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">($dataSourceManager, $q)</span> </span>{
+      <span class="hljs-keyword">return</span> {
+        restrict: <span class="hljs-string">"E"</span>,
+        template: <span class="hljs-string">"&lt;div&gt;&lt;div&gt;{{dataSource1.source}}&lt;/div&gt;&lt;div&gt;{{dataSource2.source}}&lt;/div&gt;&lt;/div&gt;"</span>,
+        scope: {
+          sourceRef1: <span class="hljs-string">"@"</span>,
+          sourceRef2: <span class="hljs-string">"@"</span>
+        },
+        replace: <span class="hljs-literal">true</span>,
+        link: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">($scope)</span> </span>{
+                  $dataSourceManager.getDataSource($scope.sourceRef1).then(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(dataSource)</span> </span>{
+              $scope.dataSource1 = dataSource;
+          });
+          $dataSourceManager.getDataSource($scope.sourceRef2).then(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(dataSource)</span> </span>{
+              $scope.dataSource2 = dataSource;
+          });
+        }
+      };
+    });</code></pre>
+
+<p>在页面中的使用：</p>
+
+</div><div id="wmd-preview-section-16" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-html hljs xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">ng-repeat</span>=<span class="hljs-value">"item in dataSources.source1.records"</span> <span class="hljs-attribute">ng-cloak</span>&gt;</span>
+        {{item}}
+<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span></code></pre>
+
+</div><div id="wmd-preview-section-17" class="wmd-preview-section preview-content">
+
+<h2 id="数据源对象属性">数据源对象属性</h2>
+
+<p>目前默认只有两种数据源，都是从后台进行请求，一种分页，一种非分页。初始化完成后，统计将数据源对象存入到<strong>$dataSourceManager</strong>中， <br>
+其中</p>
+
+<p>$dataSourceManager提供以下方法与属性</p>
+
+<table>
+<thead>
+<tr>
+  <th align="left">名称</th>
+  <th align="right">类型</th>
+  <th align="left">备注</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="left">dataSources</td>
+  <td align="right">property</td>
+  <td align="left">存放数据源的集合</td>
+</tr>
+<tr>
+  <td align="left">defereds</td>
+  <td align="right">property</td>
+  <td align="left">注册数据源时，使用的defereds集合</td>
+</tr>
+<tr>
+  <td align="left">registerDataSource</td>
+  <td align="right">method</td>
+  <td align="left">注册一个数据源，传入数据源名称和数据源对象，进行注册，两个参数。registerDataSource:(name,dataSource)</td>
+</tr>
+<tr>
+  <td align="left">removeDataSource</td>
+  <td align="right">method</td>
+  <td align="left">根据数据源名称，移除数据源</td>
+</tr>
+<tr>
+  <td align="left">getDataSource</td>
+  <td align="right">method</td>
+  <td align="left">根据数据源名称，获取数据源的promise</td>
+</tr>
+</tbody></table>
+
+
+<p>简单数据源提供一下属性与方法：</p>
+
+<table>
+<thead>
+<tr>
+  <th align="left">名称</th>
+  <th align="right">类型</th>
+  <th align="left">备注</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="left">sourceName</td>
+  <td align="right">property</td>
+  <td align="left">数据源名称</td>
+</tr>
+<tr>
+  <td align="left">url</td>
+  <td align="right">property</td>
+  <td align="left">数据源请求的url地址</td>
+</tr>
+<tr>
+  <td align="left">records</td>
+  <td align="right">property</td>
+  <td align="left">数据源的数据</td>
+</tr>
+<tr>
+  <td align="left">params</td>
+  <td align="right">property</td>
+  <td align="left">数据源的请求参数</td>
+</tr>
+<tr>
+  <td align="left">doRequestData</td>
+  <td align="right">method</td>
+  <td align="left">发起一个请求，有二个可选参数(params,callback)</td>
+</tr>
+</tbody></table>
+
+
+<p>分页数据源提供以下属性与方法：</p>
+
+<table>
+<thead>
+<tr>
+  <th align="left">名称</th>
+  <th align="right">类型</th>
+  <th align="left">备注</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="left">sourceName</td>
+  <td align="right">property</td>
+  <td align="left">数据源名称</td>
+</tr>
+<tr>
+  <td align="left">url</td>
+  <td align="right">property</td>
+  <td align="left">数据源请求的url地址</td>
+</tr>
+<tr>
+  <td align="left">records</td>
+  <td align="right">property</td>
+  <td align="left">数据源的数据</td>
+</tr>
+<tr>
+  <td align="left">totalRecord</td>
+  <td align="right">property</td>
+  <td align="left">总记录数</td>
+</tr>
+<tr>
+  <td align="left">totalPage</td>
+  <td align="right">property</td>
+  <td align="left">总页数</td>
+</tr>
+<tr>
+  <td align="left">pageSize</td>
+  <td align="right">property</td>
+  <td align="left">分页大小</td>
+</tr>
+<tr>
+  <td align="left">currentPage</td>
+  <td align="right">property</td>
+  <td align="left">当前分页</td>
+</tr>
+<tr>
+  <td align="left">params</td>
+  <td align="right">property</td>
+  <td align="left">请求参数</td>
+</tr>
+<tr>
+  <td align="left">sortName</td>
+  <td align="right">property</td>
+  <td align="left">排序字段名称</td>
+</tr>
+<tr>
+  <td align="left">sortDirection</td>
+  <td align="right">property</td>
+  <td align="left">排序字段方向</td>
+</tr>
+<tr>
+  <td align="left">doRequestData</td>
+  <td align="right">method</td>
+  <td align="left">传入三个参数(page,params,callback)，第一个为页码，第二个为请求参数，第三个为回调</td>
+</tr>
+</tbody></table>
+
+
+<p>也支持自定义数据源,请参考以下方式实现：</p>
+
+</div><div id="wmd-preview-section-18" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-javascript hljs"><span class="hljs-comment">/*简单数据源 */</span>
+    DataSource = (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">DataSource</span><span class="hljs-params">($scope1, $dataSourceManager1)</span> </span>{
+        <span class="hljs-keyword">this</span>.$scope = $scope1;
+        <span class="hljs-keyword">this</span>.$dataSourceManager = $dataSourceManager1;
+        <span class="hljs-keyword">this</span>.sourceName = <span class="hljs-keyword">this</span>.$scope.sourceName;
+        <span class="hljs-keyword">this</span>.url = <span class="hljs-keyword">this</span>.$scope.url;
+        <span class="hljs-keyword">this</span>.source = <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>;
+        <span class="hljs-keyword">this</span>.params = <span class="hljs-keyword">this</span>.$scope.params;
+      }
+
+
+      <span class="hljs-comment">/*请求数据 */</span>
+
+      DataSource.prototype.doRequestData = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(params, callback)</span> </span>{
+        <span class="hljs-keyword">var</span> me, requestArg, requestParams, url;
+        me = <span class="hljs-keyword">this</span>;
+        requestArg = [me.url];
+        url = me.url;
+        <span class="hljs-keyword">if</span> (!!params) {
+          <span class="hljs-keyword">this</span>.params = params;
+        }
+
+        <span class="hljs-comment">/*2.组合分页参数 */</span>
+        requestParams = generatorParams.call(me);
+        requestArg.push({
+          <span class="hljs-string">"params"</span>: requestParams
+        });
+        $http.get.apply(<span class="hljs-built_in">window</span>, requestArg).success(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(result)</span> </span>{
+          <span class="hljs-keyword">if</span> (angular.isDefined(me.$scope.sourceField)) {
+            me.source = me.$scope.sourceFieldGetter(result);
+          } <span class="hljs-keyword">else</span> {
+            me.source = result;
+          }
+          <span class="hljs-keyword">if</span> (angular.isFunction(callback)) {
+            callback.call(me);
+          }
+
+          <span class="hljs-comment">/*触发sourceManager的promise */</span>
+          <span class="hljs-keyword">if</span> (angular.isUndefined(me.$dataSourceManager.defereds[me.sourceName])) {
+            me.$dataSourceManager.getDataSource(me.sourceName);
+          }
+          <span class="hljs-keyword">return</span> me.$dataSourceManager.defereds[me.sourceName].resolve();
+        });
+      };
+      <span class="hljs-keyword">return</span> DataSource;
+
+    })();</code></pre>
+
+<blockquote>
+  <p>自定义数据源注意事项：需要在获取数据完成后，调用$dataSourceManager.defereds[me.sourceName].resolve();否则无法触发dataSource的promise执行。</p>
+</blockquote>
+
+</div><div id="wmd-preview-section-19" class="wmd-preview-section preview-content">
+
+<h2 id="数据源数据改变监听">数据源数据改变监听</h2>
+
+<p>数据源使用angular $scope事件传播机制，进行事件监听，若需要监听某个数据源数据的改变，调用以下代码：</p>
+
+</div><div id="wmd-preview-section-20" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-javascript hljs">$scope.$on(<span class="hljs-string">"数据源名称"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(event, obj)</span> </span>{
+     <span class="hljs-built_in">console</span>.info(<span class="hljs-string">"obj为数据改变后的数据源"</span>);
+});</code></pre></div><div id="wmd-preview-section-footnotes" class="preview-content"></div></div></body></html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link href="/static/css/controls.css"  rel="stylesheet">
+    <style>
+        [ng-cloak], [g-per] {
+            display: none;
+        }
+    </style>
+    <script src="/bower_components/requirejs/require.js" data-main="/static/app.js" data-bootstrap-modules="['test/studentListModule']"></script>
+
+</head>
+<body>
+
+<div ng-controller="studentListController">
+    <!--联想控件数据源-->
+    <g-data-source
+            page-size="10"
+            current-page="1"
+            data-params="teacherParams"
+            data-source-name="teacherSource"
+            page="true"
+            current-page-param="currentPage"
+            page-size-param="pageSize"
+            records-prop="records"
+            total-record-prop="totalRecord"
+            allow-auto-load="false"
+            dao-service="teacherDataProvider"
+            >
+    </g-data-source>
+
+    <!--表格数据源-->
+    <g-data-source
+
+            page-size="10"
+            current-page="1"
+            data-params="testParams"
+            data-source-name="source1"
+            page="true"
+            current-page-param="currentPage"
+            page-size-param="pageSize"
+            records-prop="records"
+            total-record-prop="totalRecord"
+            allow-auto-load="false"
+            dao-service="studentDataProvider"
+    >
+    </g-data-source>
+
+    <form style="margin:50px">
+        <table>
+            <tr>
+                <td>
+                    学生名称 :
+                </td>
+                <td>
+                    <input type="text" ng-model="stu.name" g-width="150"/>
+                </td>
+                <td>
+                    学生生日 :
+                </td>
+                <td>
+                    <g-date ng-model="stu.birthday" formate="yyyy-MM-dd" width="120"></g-date>
+                </td>
+                <td>
+                    教师名称 :
+                </td>
+                <td>
+                    <g-associate ng-cloak data-source-name="teacherSource"
+                                 multi="false"
+                                 ng-model="stu.teacherName"
+                                 display-express="teacherName"
+                                 keyword-prop="keyword"
+                                 value-prop="teacherName"
+                                 selected-row="teacherRow"
+                                 width="200">
+                        <g-associate-column width="60%" display-express="teacherName" >教师名称</g-associate-column>
+                        <g-associate-column display-express="teacherGender" >学生性别</g-associate-column>
+                    </g-associate>
+                </td>
+                <td>
+                    <button ng-click="query()">查询</button>
+                </td>
+	            <td>
+		            <button g-per="/daoservice-quickstart/auto-api/Student/query/**" ng-click="query()">权限验证查询</button>
+	            </td>
+                <td>
+                    <button ng-click="showEditForm()">弹窗编辑</button>
+                </td>
+                <td>
+                    <button ng-click="delete()">批量删除</button>
+                </td>
+                <td>
+                    <button ng-click="update()">批量更新保存</button>
+                </td>
+                <td>
+                    <button ng-click="myExportFile()" >
+                        导出
+                    </button>
+
+                </td>
+                <td>
+                    <button ng-click="myImport()" >
+                        导入
+                    </button>
+
+                </td>
+            </tr>
+
+        </table>
+    </form>
+
+    <div style="margin:50px"><!--g-hot-table 内定义初始化获得表对象，与双击进行表编辑函数-->
+        <g-hot-table ng-cloak data-source-name="source1"
+                     col-settings-key="employeeGridLayout"
+                     on-load-success="empGridSuccess(grid, source)"
+                     on-row-dbclick="onRowDbClick(physicalRow, field)"
+                     height="300">
+            <g-hot-checkbox-column></g-hot-checkbox-column>
+            <g-hot-column data="name" title="学生姓名" width="200">
+                <!--g-hot-column-editor 内定义编辑对象-->
+                <g-hot-column-editor>
+                    <input type="text" name="name" ng-model="row.name">
+                </g-hot-column-editor>
+            </g-hot-column>
+            <g-hot-column data="email | uppercase" title="学生邮箱" width="200">
+                <g-hot-column-editor>
+                    <input type="text" name="email" ng-model="row.email">
+                </g-hot-column-editor>
+            </g-hot-column>
+
+            <g-hot-column data="age" title="学生年龄">
+                <g-hot-column-editor>
+                    <input type="text" name="age" ng-model="row.age">
+                </g-hot-column-editor>
+            </g-hot-column>
+            <g-hot-column data="birthday|date:'yyyy-MM-dd'" title="学生生日" width="180">
+                <g-hot-column-editor>
+                    <g-date name="birthday" ng-model="row.birthday"></g-date>
+                </g-hot-column-editor>
+            </g-hot-column>
+            <g-hot-column data="teacherName" title="教师名称">
+                <g-hot-column-editor>
+                    <input type="text" name="teacherName" ng-model="row.teacherName">
+                </g-hot-column-editor>
+            </g-hot-column>
+            <g-hot-column data="sex|SexTransfer" title="教师性别">
+                <g-hot-column-editor>
+                    <g-dropdown placeholder="请选择" list-type="single" ng-model="row.sex" width="120">
+                        <g-dropitem value="0">男</g-dropitem>
+                        <g-dropitem value="1">女</g-dropitem>
+                   </g-dropdown>
+                </g-hot-column-editor>
+            </g-hot-column>
+        </g-hot-table>
+
+        <g-pagination-navi source-name="source1"></g-pagination-navi>
+
+    </div>
+</div>
+</body>
+<link href="../../static/css/controls.css" rel="stylesheet" type="text/css">
+<link href="../../bower_components/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<script src="../../bower_components/jquery/dist/jquery.min.js"></script>
+<script src="../../static/app/daoService/ModelGraph.js"></script>
+<script src="../../static/app/daoService/Uploader.js"></script>
+<script src="../../static/app/daoService/DaoServiceClient.js"></script>
+<script>
+    this.ds.client.config({
+        serverUrl: 'http://localhost:80/ec-demo/',
+        projectKey: 'daoservice-quickstart',
+        serviceCode: 'DS_OWN',
+        excelImportConfig: {
+            filter: 'csv,xls,xlsx',              // 文件类型过滤器
+            maxsize: 10,                         // 文件上传大小限制，单位：M
+        },
+    });
+
+    var dsc = ds.client,
+        student = ds.QStudent.using(ds.client),
+
+        ___ = dsc.___;
+
+
+    function onFileUploadFail(data) {
+        //alert(JSON.stringify(data, null, 4));
+        document.getElementById('getResult').innerText = JSON.stringify(data, null, 4);
+    }
+
+    function runCommand(sign) {
+
+        var code;
+        code = document.getElementById(sign).value;
+        var func = new Function(code);
+        func();
+    }
+    function callable(data) {
+        document.getElementById('getResult').innerText = JSON.stringify(data, null, 4);
+    }
+
+</script>
+
+</html>

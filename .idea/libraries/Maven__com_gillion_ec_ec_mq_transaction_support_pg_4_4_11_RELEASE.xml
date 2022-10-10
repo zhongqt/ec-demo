@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.gillion.ec:ec-mq-transaction-support:pg:4.4.11.RELEASE">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/gillion/ec/ec-mq-transaction-support/4.4.11.RELEASE/ec-mq-transaction-support-4.4.11.RELEASE-pg.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/gillion/ec/ec-mq-transaction-support/4.4.11.RELEASE/ec-mq-transaction-support-4.4.11.RELEASE-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/gillion/ec/ec-mq-transaction-support/4.4.11.RELEASE/ec-mq-transaction-support-4.4.11.RELEASE-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/css/controls.css"/>
+    <script src="/bower_components/requirejs/require.js" data-main="/static/app" data-bootstrap-modules="['test/StudentEditModule']"></script>
+
+    <title>学生編輯</title>
+    <style>
+        [ng-cloak]{
+            display: none;
+        }
+
+    </style>
+</head>
+<body ng-controller="StudentEditController">
+<g-data-source
+        page-size="10"
+        current-page="1"
+        data-params="teacherParams"
+        data-source-name="teacherSource"
+        page="true"
+        current-page-param="currentPage"
+        page-size-param="pageSize"
+        records-prop="records"
+        total-record-prop="totalRecord"
+        allow-auto-load="true"
+        dao-service="teacherDataProvider"
+>
+</g-data-source>
+<form class="form-horizontal" name="StudentEditForm">
+
+    <table>
+        <tr>
+            <td>
+                学生名称 :
+            </td>
+            <td>
+                <input type="text" name="studentName" ng-model="student.name"/>
+
+            </td>
+            <td>
+                学生英文名 :
+            </td>
+            <td>
+                <input type="text" name="studentNm" ng-model="student.studentNm"/>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                学生年龄 :
+            </td>
+            <td>
+                <input type="text" name="age" ng-model="student.age"/>
+            </td>
+            <td>
+                学生入职日期 :
+            </td>
+            <td>
+                <!--日期控件-->
+                <g-date name="lastTime" ng-model="student.lastTime" formate="yyyy-MM-dd" width="120"></g-date>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                教师名称 :
+            </td>
+            <td>
+                <!--联想控件-->
+                <g-associate ng-cloak data-source-name="teacherSource"
+                             multi="false"
+                             name="teacher.teacherName"
+                             ng-model="teacher.teacherName"
+                             display-express="teacherName"
+                             keyword-prop="keyword"
+                             value-prop="teacherName"
+                             selected-row="teacher"
+                             width="200">
+                    <g-associate-column width="60%" display-express="teacherName" >教师名称</g-associate-column>
+                    <g-associate-column display-express="teacherGender" >教师性别</g-associate-column>
+                </g-associate>
+            </td>
+            <td>
+                教师性别  :
+            </td>
+            <td>
+                <input g-data-bind="teacher" value-prop="teacherId" hidden
+                       multi="false"  ng-model="student.teacherId" />
+
+                <!--下拉控件-->
+                <g-dropdown placeholder="请选择" list-type="single" ng-model="teacher.teacherGender" width="120">
+                    <g-dropitem value="0">男</g-dropitem>
+                    <g-dropitem value="1">女</g-dropitem>
+                </g-dropdown>
+
+            </td>
+        </tr>
+
+
+
+        <tr>
+                <g-upload-group
+                        key="4"
+                        initial-show-count="1"
+                        ng-model="fileInfos"
+                        on-before-delete="myBeforeDelete(fileInfo)"
+                        on-before-upload="myBeforeUpload(fileInfo, uploaderStrategy)"
+                >
+                </g-upload-group>
+        </tr>
+
+
+        <tr>
+            <td>
+                <button type="button" ng-click="saveStudent()" class="btn btn-default">保存</button>
+            </td>
+        </tr>
+
+    </table>
+
+</form>
+</body>
+
+</html>

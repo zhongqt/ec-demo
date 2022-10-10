@@ -1,0 +1,1 @@
+define({method:"get",data:"u=2&b=3",params:"u=2&b=3",url:"dict.json"});

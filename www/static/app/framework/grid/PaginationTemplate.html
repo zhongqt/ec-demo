@@ -1,0 +1,14 @@
+<div ng-hide="uninitialized()">
+    <div class="dataTables_info"><span ng-if="totalCount > 0">展示 <span ng-bind="(page - 1) * pageSize + 1"></span> 到 <span ng-bind="page * pageSize>totalCount?totalCount:page*pageSize"></span> 条，</span> 总共 <span ng-bind="totalCount"></span> 条记录。</div>
+    <div class="dataTables_paginate paging_simple_numbers">
+        <a class="paginate_button previous ng-class:{\'disabled\': page === 1};" ng-click="page === 1 || goPage(page -1)">上一页</a>
+        <a class="paginate_button ng-class:{\'current\': page === 1};" ng-click="goPage(1)">1</a>
+        <a class="paginate_button ng-class:{\'current\': page === 2};" ng-click="goPage(1)" ng-if="start === 3">2</a>
+        <a class="paginate_button" ng-click="goPage(page - 5)" ng-if="start > 3">...</a>
+        <a class="paginate_button ng-class:{\'current\': page === ele};" ng-repeat="ele in getPageRange()" ng-click="goPage(ele)">{{ele}}</a>
+        <a class="paginate_button" ng-click="goPage(page + 5)" ng-if="end < (totalPage - 2)">...</a>
+        <a class="paginate_button ng-class:{\'current\': page === totalPage - 1};" ng-click="goPage(totalPage - 1)" ng-if="end === (totalPage - 2)">{{totalPage - 1}}</a>
+        <a class="paginate_button ng-class:{\'current\': page === totalPage};" ng-click="goPage(totalPage)" ng-if="totalPage > 1" ng-bind="totalPage"></a>
+        <a class="paginate_button next ng-class:{\'disabled\': page === totalPage || totalPage < 1};" ng-click="(page === totalPage || totalPage < 1) || goPage(page +1)">下一页</a>
+    </div>
+</div>

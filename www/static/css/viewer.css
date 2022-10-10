@@ -1,0 +1,146 @@
+.viewer-images{
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    height: 100%;
+    width: 100%;
+    display: block;
+    background-color: #000000;
+}
+
+.viewer-images-btn-close{
+    position: fixed;
+    right: 0px;
+    top: 0px;
+    background-color: #525252;
+    width: 100px;
+    height: 100px;
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 900;
+    border-radius: 0px;
+    border-bottom-left-radius: 100px;
+    padding-right: 20px;
+    text-align: right;
+    padding-bottom: 30px;
+}
+
+.viewer-images-content{
+    position: relative;
+    width: 80%;
+    height: 80%;
+    overflow: hidden;
+    top:10%;
+    left: 10%;
+    text-align: center;
+    /*right: 10%;*/
+    /*margin-top: 15%;*/
+    /*margin-left: 10%;*/
+}
+
+.viewer-images-current{
+    text-align: center;
+}
+
+.viewer-images-magnifying{
+    max-height: 100%;
+    max-width: 100%;
+}
+
+.viewer-images-operate-mask{
+
+    position:fixed;
+    width: 80%;
+    left: 10%;
+    bottom: 10%;
+    text-align: center;
+    background-color: #000000;
+    opacity: 0.4;
+    height: 65px;
+}
+
+.viewer-images-operate{
+    position:fixed;
+    width: 80%;
+    left: 10%;
+    bottom: 10%;
+    text-align: center;
+    height: 65px;
+    vertical-align: middle;
+    line-height: 65px;
+    background-color: transparent;
+}
+
+.viewer-images-operate .btn{
+    color: #ffffff;
+    background-color: transparent;
+    opacity: 1;
+    margin: 0px 15px;
+}
+.viewer-images-operate .fi:before{
+
+    /*font-weight: 900;*/
+    font-size: 30px;
+}
+.viewer-images-operate .fi-del:before{
+    font-size: 28px;
+}
+
+.viewer-images-operate .viewer-images-operate-btn-expand{
+
+    font-size: 18px;
+    font-weight:600;
+    background-color: #333333;
+    padding-top: 1px;
+    padding-bottom: 1px;
+}
+
+.viewer-content-btn-prev, .viewer-content-btn-next{
+
+    position: fixed;
+    background-color: #464646;
+    color: #ffffff;
+    height: 50px;
+    font-size: 20px;
+    border-radius: 0px;
+    margin-top: -50px;
+    top: 50%;
+    width: 33px;
+}
+
+.viewer-content-btn-prev{
+    left: 9%;
+    margin-left: -33px;
+}
+.viewer-content-btn-next{
+    right: 9%;
+    margin-right: -33px;
+}
+
+.viewer-images-list{
+
+}
+
+.viewer-images-list img{
+    width: 86px;
+    height: 86px;
+    margin-left: 5px;
+    margin-right: 5px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.viewer-images-list{
+    position: fixed;
+    bottom: 0px;
+    text-align: center;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    /*height: 10%;*/
+}
+
+.viewer-images-list img.current{
+    border: 7px #ffffff solid;
+
+}

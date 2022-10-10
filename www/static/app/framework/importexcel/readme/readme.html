@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EXCEL导入</title>
+    <meta charset='utf-8'>
+    <link href='./marxico.css' rel='stylesheet'>
+</head>
+<body>
+<div id='preview-contents' class='note-content'>
+    <div id="wmd-preview" class="preview-content"></div>
+    <div id="wmd-preview-section-1" class="wmd-preview-section preview-content">
+
+    </div><div id="wmd-preview-section-2" class="wmd-preview-section preview-content">
+
+    <h1 id="EXCEL导入">EXCEL导入</h1>
+
+    <div><div class="toc"><div class="toc">
+        <ul>
+            <li><a href="#EXCEL导入">EXCEL导入</a><ul>
+                <li><a href="#1-EXCEL导入后台">1. EXCEL导入后台</a><ul>
+                    <li><a href="#11-EXCEL导入配置信息">1.1 EXCEL导入配置信息</a></li>
+                    <li><a href="#12-EXCEL导入后台配置">1.2 EXCEL导入后台配置</a></li>
+                    <li><a href="#13-编写EXCEL导入服务类">1.3 编写EXCEL导入服务类</a></li>
+                </ul>
+                </li>
+                <li><a href="#2-EXCEL导入前端">2. EXCEL导入前端</a></li>
+            </ul>
+            </li>
+        </ul>
+    </div>
+    </div>
+    </div>
+
+</div><div id="wmd-preview-section-3" class="wmd-preview-section preview-content">
+
+    <h2 id="1-EXCEL导入后台">1. EXCEL导入后台</h2>
+    <p>EXCEL导入：是根据EXCEL模板读取传入的EXCEL文件，并存入到List对象中，以供各业务系统使用。首先需要配置EXCEL导入的一些配置信息。</p>
+    <p>下面是EXCEL导入配置信息说明：</p>
+
+</div><div id="wmd-preview-section-4" class="wmd-preview-section preview-content">
+
+    <h3 id="11-EXCEL导入配置信息配置">1.1 EXCEL导入配置信息</h3>
+
+    <p>EXCEL导入配置信息可在数据库中进行配置维护，也可以直接使用代码将配置信息写入，下面介绍使用数据库配置方式来进行配置。</p>
+
+    <p>EXCEL导入配置表: <br>
+        <strong>IMPORT_CONFIG</strong><br>
+        内容如下：</p>
+
+    <p><strong>IMPORT_CONFIG</strong>:</p>
+
+    <table>
+        <thead>
+        <tr>
+            <th align="left">列名</th>
+            <th align="left">字段说明</th>
+        </tr>
+        </thead>
+        <tbody><tr>
+            <td align="left">id</td>
+            <td align="left">主键</td>
+        </tr>
+        <tr>
+            <td align="left">template</td>
+            <td align="left">EXCEL模板(二进制数据存储)</td>
+        </tr>
+        <tr>
+            <td align="left">class_name</td>
+            <td align="left">读取excel转化成的实体对象的类名(全限定名)</td>
+        </tr>
+        <tr>
+            <td align="left">dictionary_url</td>
+            <td align="left">获取数据字典controller的URL地址</td>
+        </tr>
+        <tr>
+            <td align="left">deal_service</td>
+            <td align="left">结果处理类</td>
+        </tr>
+        <tr>
+            <td align="left">method_name</td>
+            <td align="left">结果处理类方法名</td>
+        </tr>
+        </tbody></table>
+
+
+</div><div id="wmd-preview-section-8" class="wmd-preview-section preview-content">
+
+
+    <h3 id="12-EXCEL导入后台配置">1.2 EXCEL导入后台配置</h3>
+
+    <p>EXCEL导入后台提供一个访问接口(ImportController类[/import/excel]),一个处理EXCEL导入的Service服务类(ImportSupportService)<br>
+        其中：ImportSupportService类已经在spring-excel-service.xml文件中定义好了，只需在ApplicationContext.xml引入就OK了) <br>
+</div><div id="wmd-preview-section-11" class="wmd-preview-section preview-content">
+    <pre class="prettyprint hljs-dark"><code class="language-xml hljs"><span class="hljs-tag">&lt;<span class="hljs-title">import</span> <span class="hljs-attribute">resource</span>=<span class="hljs-value">"classpath*:spring-excel-service.xml"</span>/&gt;</span></code></pre>
+
+    <p>ImportController类在spring-excel-controller.xml文件中定义好了，需在dispatcher-servlet.xml中引入</p>
+</div><div id="wmd-preview-section-12" class="wmd-preview-section preview-content">
+
+    <pre class="prettyprint hljs-dark"><code class="language-xml hljs"><span class="hljs-tag">&lt;<span class="hljs-title">import</span> <span class="hljs-attribute">resource</span>=<span class="hljs-value">"classpath*:spring-excel-controller.xml"</span>/&gt;</span></code></pre>
+
+</div><div id="wmd-preview-section-13" class="wmd-preview-section preview-content">
+
+    <h3 id="13-编写EXCEL导入服务类">1.3 编写EXCEL导入服务类</h3>
+
+    <p><span style="color:blue;">a、</span>各个业务系统需根据自己的需求，实现ImportService接口</p>
+
+    <ol>
+        <li>接口ImportConfig getImportConfig(String key) 根据key参数从数据库或其他配置文件中获取导入的配置信息。</li>
+    </ol>
+
+    <p>以下给个示例实现：</p>
+
+</div><div id="wmd-preview-section-14" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-java hljs"><span class="hljs-keyword">package</span> com.gillion.sebusiness.demo.service.importexcel;
+
+    <span class="hljs-keyword">import</span> com.gillion.excel.in.entity.ImportConfig;
+    <span class="hljs-keyword">import</span> com.gillion.excel.in.service.ImportService;
+    <span class="hljs-keyword">import</span> com.gillion.sebusiness.excel.mapper.ImportConfigMapper;
+    <span class="hljs-keyword">import</span> org.springframework.beans.factory.annotation.Autowired;
+    <span class="hljs-keyword">import</span> org.springframework.stereotype.Service;
+
+    <span class="hljs-annotation">@Service("importServiceImpl")</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ImportServiceImpl</span><span class="hljs-keyword"> implements</span> <span class="hljs-title">ImportService</span>{
+
+    <span class="hljs-annotation">@Autowired</span>
+    <span class="hljs-keyword">private</span> ImportConfigMapper importConfigMapper;
+    <span class="hljs-javadoc">/**
+    * 获取配置信息
+    * @param fileName
+    * @param ou
+    */</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> ImportConfig <span class="hljs-title">getImportConfig</span><span class="hljs-params">(String key)</span> </span>{
+    com.gillion.sebusiness.excel.model.ImportConfig config=importConfigMapper.selectByPrimaryKey(key);
+        ImportConfig importConfig = new ImportConfig();
+        importConfig.setTemplate(config.getTemplate());
+        importConfig.setDictionaryUrl(config.getDictionaryUrl());
+        importConfig.setClassName(config.getClassName());
+        importConfig.setKey(config.getKey());
+        importConfig.setDealService(config.getDealService());
+        importConfig.setMethodName(config.getMethodName());
+        <span class="hljs-keyword">return</span> importConfig;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> ImportConfigMapper <span class="hljs-title">getImportConfigMapper</span><span class="hljs-params">( )</span> </span>{
+        <span class="hljs-keyword">return</span> importConfigMapper;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> void <span class="hljs-title">setImportConfigMapper</span><span class="hljs-params">(ImportConfigMapper importConfigMapper)</span> </span>{
+        <span class="hljs-keyword">this</span>.importConfigMapper = importConfigMapper;
+    }
+}
+</span></code></pre>
+
+    <p><span style="color:blue;">b、</span>各个业务系统需根据自己的需求，编写处理转化好了的EXCEL数据的服务:</p>
+    <p>以下给个示例实现：</p>
+
+<pre class="prettyprint hljs-dark"><code class="language-java hljs"><span class="hljs-keyword">package</span> com.gillion.sebusiness.demo.service.importexcel.impl;
+
+    <span class="hljs-keyword">import</span> com.gfa4j.batch.domain.BatchExecutor;
+    <span class="hljs-keyword">import</span> com.gfa4j.batch.domain.BatchExecutorFactory;
+    <span class="hljs-keyword">import</span> com.gfa4j.utils.ContextHolder;
+    <span class="hljs-keyword">import</span> com.gillion.sebusiness.demo.export.test.StudentScore;
+    <span class="hljs-keyword">import</span> com.gillion.sebusiness.demo.service.importexcel.ImportDealService;
+    <span class="hljs-keyword">import</span> org.springframework.beans.BeansException;
+    <span class="hljs-keyword">import</span> org.springframework.beans.factory.InitializingBean;
+    <span class="hljs-keyword">import</span> org.springframework.context.ApplicationContext;
+    <span class="hljs-keyword">import</span> org.springframework.context.ApplicationContextAware;
+    <span class="hljs-keyword">import</span> org.springframework.context.expression.BeanFactoryResolver;
+    <span class="hljs-keyword">import</span> org.springframework.expression.spel.support.StandardEvaluationContext;
+    <span class="hljs-keyword">import</span> org.springframework.stereotype.Service;
+    <span class="hljs-keyword">import</span> java.util.List;
+
+    <span class="hljs-annotation">@Service</span>(<span class="hljs-string">"importDealServiceImpl"</span>)
+    <span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ImportDealServiceImpl</span><span class="hljs-keyword"> implements</span> <span class="hljs-title">ImportDealService,ApplicationContextAware,InitializingBean</span>{
+
+    <span class="hljs-keyword">private</span> StandardEvaluationContext context;
+    <span class="hljs-keyword">private</span> ApplicationContext applicationContext;
+    <span class="hljs-javadoc">/**
+    * 把excel数据(List<? extends BaseModel>)存入数据库中
+    * @param excelData Excel中的数据
+    */</span>
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> void <span class="hljs-title">dealExcleList</span><span class="hljs-params">(List&lt;StudentScore&gt; excelData)</span> </span>{
+        BatchExecutorFactory batchExecutorFactory = ContextHolder.getBean(BatchExecutorFactory.class);
+        BatchExecutor batchExecutor = batchExecutorFactory.getBatchExecutor(StudentScore.class);
+        batchExecutor.saveOrUpdate(excelData);
+    }
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> void <span class="hljs-title">afterPropertiesSet</span><span class="hljs-params">() <span class="hljs-keyword">throws</span> Exception </span> </span>{
+        public void afterPropertiesSet() throws Exception {
+        context = new StandardEvaluationContext();
+        context.setBeanResolver(<span class="hljs-keyword">new</span> BeanFactoryResolver(applicationContext));
+    }
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> void <span class="hljs-title">setApplicationContext</span><span class="hljs-params">(ApplicationContext applicationContext)<span class="hljs-keyword">throws</span> BeansException </span> </span>{
+        <span class="hljs-keyword">this</span>.applicationContext = applicationContext;
+    }
+
+}
+    </span>
+</code></pre>
+
+
+    <p><span style="color:blue;">c、</span>各个业务系统需根据自己的需求，编写导入时需要的数据字典Controller类:</p>
+    <p>以下给个示例实现：</p>
+
+<pre class="prettyprint hljs-dark"><code class="language-java hljs"><span class="hljs-keyword">package</span> com.gillion.sebusiness.demo.controller.dictionary;
+    <span class="hljs-keyword">import</span>  org.springframework.stereotype.Controller;
+    <span class="hljs-keyword">import</span>  org.springframework.web.bind.annotation.RequestMapping;
+    <span class="hljs-keyword">import</span>  org.springframework.web.bind.annotation.RequestMethod;
+    <span class="hljs-keyword">import</span>  org.springframework.web.bind.annotation.ResponseBody;
+
+    <span class="hljs-annotation">@Controller</span>
+    <span class="hljs-annotation">@RequestMapping("/dictionary")</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DictionaryController</span>{
+
+    <span class="hljs-annotation">@RequestMapping</span>(<span class="hljs-string">method = RequestMethod.GET</span>)
+    <span class="hljs-annotation">@ResponseBody</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Page <span class="hljs-title">returnDictionary</span><span class="hljs-params">( )</span> </span>{
+        String result = "{\"name\":{\"小华\":\"华哥\"}}";
+        <span class="hljs-keyword">return</span> result;
+    }
+}
+</span></code></pre>
+
+</div>
+
+
+    <h2 id="2-EXCEL导入前端">2. EXCEL导入前端</h2>
+    <p>EXCEL导入前端,为一个g-import-excel指令控件</g-import-></p>
+    <p>属性说明如下</p>
+    <div id="wmd-preview-section-119" class="wmd-preview-section preview-content">
+        <h2 id="属性说明">属性说明</h2>
+        <table>
+            <thead>
+            <tr>
+                <th align="left">参数名</th>
+                <th align="left">含义</th>
+                <th align="left">是否必须</th>
+                <th align="left">说明</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td align="left">key</td>
+                <td align="left">查询配置信息参数</td>
+                <td align="left">Y</td>
+                <td align="left">用于后台代码查询导入配置信息的查询条件</td>
+            </tr>
+            <tr>
+                <td align="left">import_url</td>
+                <td align="left">处理导入的controller地址</td>
+                <td align="left">Y</td>
+                <td align="left">后续会统一配置到前端配置文件中。目前地址为[ /项目名称/import/excel ]</td>
+            </tr>
+            <tr>
+                <td align="left">display-express</td>
+                <td align="left">按钮显示名称</td>
+                <td align="left">Y</td>
+                <td align="left"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <p>示例说明如下:</p>
+    <div id="wmd-preview-section-230" class="wmd-preview-section preview-content">
+      <pre class="prettyprint hljs-dark"><code class="language-html hljs xml"> <span class="hljs-tag">&lt;<span class="hljs-title">g-import-excel</span>
+       <span class="hljs-attribute">key</span>=<span class="hljs-value">"id1"</span>
+       <span class="hljs-attribute">import_url</span>=<span class="hljs-value">"/gillion-web/import/excel"</span>
+       <span class="hljs-attribute">display-express</span>=<span class="hljs-value">"导入EXCEL数据"</span>&gt;</span>
+          <span class="hljs-tag">&lt;/<span class="hljs-title">g-import-excel</span>&gt;</span></code></pre>
+    </div>
+
+    <div id="wmd-preview-section-footnotes" class="preview-content"></div></div></body></html>

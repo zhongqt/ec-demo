@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="stock-serivce" />
+        <module name="ec-demo-api" />
+        <module name="ec-demo-business" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="ec-demo" target="1.5" />
+      <module name="ec-demo-api" target="8" />
+      <module name="ec-demo-business" target="1.8" />
+      <module name="ec-demo-parent" target="1.8" />
+      <module name="ec-demo3" target="1.5" />
+      <module name="my-demo" target="8" />
+      <module name="my-demo2" target="1.8" />
+      <module name="stock-serivce" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="ec-demo-api" options="-parameters" />
+      <module name="ec-demo-business" options="-parameters" />
+      <module name="my-demo2" options="-parameters" />
+      <module name="stock-serivce" options="-parameters" />
+    </option>
+  </component>
+</project>

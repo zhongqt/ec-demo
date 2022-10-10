@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EXCEL导出</title>
+    <meta charset='utf-8'>
+    <link href='./marxico.css' rel='stylesheet'>
+</head>
+<body>
+<div id='preview-contents' class='note-content'>
+    <div id="wmd-preview" class="preview-content"></div>
+    <div id="wmd-preview-section-1" class="wmd-preview-section preview-content">
+
+    </div><div id="wmd-preview-section-2" class="wmd-preview-section preview-content">
+
+    <h1 id="EXCEL导出">EXCEL导出</h1>
+
+    <div><div class="toc"><div class="toc">
+        <ul>
+            <li><a href="#EXCEL导出">EXCEL导出</a><ul>
+                <li><a href="#1-EXCEL导出后台">1. EXCEL导出后台</a><ul>
+                    <li><a href="#11-EXCEL导出配置信息配置">1.1 EXCEL导出配置信息</a></li>
+                    <li><a href="#12-EXCEL导出后台配置">1.2 EXCEL导出后台配置</a></li>
+                    <li><a href="#13-编写EXCEL导出服务类">1.3 编写EXCEL导出服务类</a></li>
+                </ul>
+                </li>
+                <li><a href="#2-EXCEL导出前端">2. EXCEL导出前端</a></li>
+            </ul>
+            </li>
+        </ul>
+    </div>
+    </div>
+    </div>
+
+</div><div id="wmd-preview-section-3" class="wmd-preview-section preview-content">
+
+    <h2 id="1-EXCEL导出后台">1. EXCEL导出后台</h2>
+    <p>EXCEL导出：是把要导出的数据填充到EXCEL模板中，生成EXCEL文件输出到前端。固首先需要配置EXCEL导出的一些配置信息。</p>
+    <p>下面是EXCEL导出配置信息说明：</p>
+
+</div><div id="wmd-preview-section-4" class="wmd-preview-section preview-content">
+
+    <h3 id="11-EXCEL导出配置信息配置">1.1 EXCEL导出配置信息</h3>
+
+    <p>EXCEL导出配置信息可在数据库中进行配置维护，也可以直接使用代码将配置信息写入，下面介绍使用数据库配置方式来进行配置。</p>
+
+    <p>EXCEL导出配置表: <br>
+        <strong>EXPORT_CONFIG</strong><br>
+        内容如下：</p>
+
+    <p><strong>EXPORT_CONFIG</strong>:</p>
+
+    <table>
+        <thead>
+        <tr>
+            <th align="left">列名</th>
+            <th align="left">字段说明</th>
+        </tr>
+        </thead>
+        <tbody><tr>
+            <td align="left">id</td>
+            <td align="left">主键</td>
+        </tr>
+        <tr>
+            <td align="left">template</td>
+            <td align="left">EXCEL模板(二进制数据存储)</td>
+        </tr>
+        <tr>
+            <td align="left">async</td>
+            <td align="left">是否异步打印(0:否;1:是)</td>
+        </tr>
+        <tr>
+            <td align="left">dictionary_url</td>
+            <td align="left">获取数据字典controller的URL地址</td>
+        </tr>
+        <tr>
+            <td align="left">file_name</td>
+            <td align="left">导出EXCEL的文件名</td>
+        </tr>
+        <tr>
+            <td align="left">source_url</td>
+            <td align="left">获取打印数据controller的URL地址</td>
+        </tr>
+        <tr>
+            <td align="left">page_size</td>
+            <td align="left">异步打印时,每次请求的记录条数</td>
+        </tr>
+        <tr>
+            <td align="left">class_name</td>
+            <td align="left">打印数据的实体类名(全限定名)</td>
+        </tr>
+        </tbody></table>
+
+
+</div><div id="wmd-preview-section-8" class="wmd-preview-section preview-content">
+
+
+    <h3 id="12-EXCEL导出后台配置">1.2 EXCEL导出后台配置</h3>
+
+    <p>EXCEL导出后台提供一个访问接口(ExportController类[/export/excel]),一个处理EXCEL导出的Service服务类(ExportSupportService)<br>
+        其中：ExportSupportService类已经在spring-excel-service.xml文件中定义好了，只需在ApplicationContext.xml引入就OK了) <br>
+</div><div id="wmd-preview-section-11" class="wmd-preview-section preview-content">
+    <pre class="prettyprint hljs-dark"><code class="language-xml hljs"><span class="hljs-tag">&lt;<span class="hljs-title">import</span> <span class="hljs-attribute">resource</span>=<span class="hljs-value">"classpath*:spring-excel-service.xml"</span>/&gt;</span></code></pre>
+
+    <p>ExportController类在spring-excel-controller.xml文件中定义好了，需在dispatcher-servlet.xml中引入</p>
+</div><div id="wmd-preview-section-12" class="wmd-preview-section preview-content">
+
+    <pre class="prettyprint hljs-dark"><code class="language-xml hljs"><span class="hljs-tag">&lt;<span class="hljs-title">import</span> <span class="hljs-attribute">resource</span>=<span class="hljs-value">"classpath*:spring-excel-controller.xml"</span>/&gt;</span></code></pre>
+
+</div><div id="wmd-preview-section-13" class="wmd-preview-section preview-content">
+
+    <h3 id="13-编写EXCEL导出服务类">1.3 编写EXCEL导出服务类</h3>
+
+    <p><span style="color:blue;">a、</span>各个业务系统需根据自己的需求，实现ExportService接口</p>
+
+    <ol>
+        <li>接口ExportConfig getExportConfig(String key) 根据key参数从数据库或其他配置文件中获取导出的配置信息。</li>
+        <li>接口void dealAsyncExport(String fileName, OutputStream ou) 当打印为异步时，转化成EXCEL后的处理方法</li>
+    </ol>
+
+    <p>以下给个示例实现：</p>
+
+</div><div id="wmd-preview-section-14" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-java hljs"><span class="hljs-keyword">  package</span> com.gillion.sebusiness.demo.service.exportExcel;
+
+    <span class="hljs-keyword">import</span> com.gillion.excel.out.entity.ExportConfig;
+    <span class="hljs-keyword">import</span> com.gillion.excel.out.service.ExportService;
+    <span class="hljs-keyword">import</span> com.gillion.sebusiness.test.mapper.ExportInfoMapper;
+    <span class="hljs-keyword">import</span> com.gillion.sebusiness.test.model.ExportInfo;
+    <span class="hljs-keyword">import</span> org.springframework.beans.factory.annotation.Autowired;
+    <span class="hljs-keyword">import</span> org.springframework.stereotype.Service;
+    <span class="hljs-keyword">import</span> java.io.*;
+
+    <span class="hljs-annotation">@Service("exportService")</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ExportServiceImpl</span><span class="hljs-keyword"> implements</span> <span class="hljs-title">ExportService</span>{
+    <span class="hljs-annotation">@Autowired</span>
+    <span class="hljs-keyword">private</span> ExportInfoMapper exportInfoMapper;
+    <span class="hljs-javadoc">/**
+    * 处理异步的excel结果
+    * @param fileName
+    * @param ou
+    */</span>
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> void <span class="hljs-title">dealAsyncExport</span><span class="hljs-params">(String fileName, OutputStream ou)</span> </span>{
+        <span class="hljs-keyword">try</span>{
+            String filePath = "D:\\excelexport\\"+fileName;
+            File file = <span class="hljs-keyword">new</span> File(filePath);
+            <span class="hljs-keyword">if</span>(!file.exists()){
+              file.createNewFile();
+            }
+            ByteArrayOutputStream out = (ByteArrayOutputStream)ou;
+            FileOutputStream fileout = <span class="hljs-keyword">new</span> FileOutputStream(new File(filePath));
+            fileout.write(out.toByteArray());
+            fileout.flush();
+            fileout.close();
+        }<span class="hljs-keyword">catch</span>(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    <span class="hljs-javadoc">/**
+    * 得到导出EXCEL的配置信息
+    * @param key
+    * @return
+    */</span>
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> ExportConfig <span class="hljs-title">getExportConfig</span><span class="hljs-params">(String key)</span> </span>{
+        ExportInfo exportInfo = exportInfoMapper.selectByPrimaryKey(key);
+        ExportConfig exportConfig = <span class="hljs-keyword">new</span> ExportConfig();
+        exportConfig.setDictionaryUrl(exportInfo.getDictionaryUrl());
+        exportConfig.setClassName(exportInfo.getClassName());
+        exportConfig.setAsync(exportInfo.getAsync());
+        exportConfig.setFileName(exportInfo.getFileName());
+        exportConfig.setPageSize(exportInfo.getPageSize());
+        exportConfig.setPrintMode(exportInfo.getPrintMode());
+        exportConfig.setSourceUrl(exportInfo.getSourceUrl());
+        exportConfig.setTemplate(<span class="hljs-keyword">new</span> ByteArrayInputStream(exportInfo.getTemplate()));
+        <span class="hljs-keyword">return</span> exportConfig;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> ExportInfoMapper <span class="hljs-title">getExportInfoMapper</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> exportInfoMapper;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> void <span class="hljs-title">setExportInfoMapper</span><span class="hljs-params">(ExportInfoMapper exportInfoMapper)</span> </span>{
+        this.exportInfoMapper = exportInfoMapper;
+    }
+
+  }
+</span></code></pre>
+
+    <p><span style="color:blue;">c、</span>各个业务系统需根据自己的需求，编写打印时需要的数据字典Controller类:</p>
+    <p>以下给个示例实现：</p>
+
+<pre class="prettyprint hljs-dark"><code class="language-java hljs"><span class="hljs-keyword">package</span> com.gillion.sebusiness.demo.controller.dictionary;
+    <span class="hljs-keyword">import</span>  org.springframework.stereotype.Controller;
+    <span class="hljs-keyword">import</span>  org.springframework.web.bind.annotation.RequestMapping;
+    <span class="hljs-keyword">import</span>  org.springframework.web.bind.annotation.RequestMethod;
+    <span class="hljs-keyword">import</span>  org.springframework.web.bind.annotation.ResponseBody;
+
+    <span class="hljs-annotation">@Controller</span>
+    <span class="hljs-annotation">@RequestMapping("/dictionary")</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DictionaryController</span>{
+
+    <span class="hljs-annotation">@RequestMapping</span>(<span class="hljs-string">method = RequestMethod.GET</span>)
+    <span class="hljs-annotation">@ResponseBody</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Page <span class="hljs-title">returnDictionary</span><span class="hljs-params">( )</span> </span>{
+        String result = "{\"name\":{\"小华\":\"华哥\"}}";
+        <span class="hljs-keyword">return</span> result;
+    }
+}
+</span></code></pre>
+
+</div>
+
+
+    <h2 id="2-EXCEL导出前端">2. EXCEL导出前端</h2>
+    <p>EXCEL导出前端为一个angularjs的服务,只需要在controller或指令中调用即可。</p>
+    <p>controller中的js示例代码</p>
+    <div  class="wmd-preview-section preview-content">
+<pre class="prettyprint hljs-dark"><code class="language-javscript hljs nimrod">
+(function() {
+    define([
+        <span class="hljs-string">"angular"</span>,
+        <span class="hljs-string">"framework/exportexcel/GillionExportExcelModule"</span>,
+        <span class="hljs-string">'framework/datasource/DataSourceModule</span>
+    ], function(angular) {
+        <span class="hljs-keyword">var</span> TestExportExcelModule;
+        TestExportExcelModule = angular.module("TestExportExcelModule",
+                               ['GillionExportExcelModule','DataSourceModule']);
+        TestExportExcelModule.controller("ExportExcelController",
+            function($scope,$exportExcelService){
+                <span class="hljs-keyword">$scope</span>.export =function(){
+                var sourceName,key,url;
+                sourceName='exportExcel';
+                key="id1";
+                url="/gillion-web/export/excel";
+                isprintall = "false";
+                <span class="hljs-keyword">$exportExcelService</span>.export(sourceName,key,isprintall,url);
+            }
+        });
+    });
+}).call(<span class="hljs-keyword">this</span>);
+</code></pre></div>
+    <p style="color:blue;font-size:18px;">导出服务 <span style="color:red;">$exportExcelService</span>.<span style="color:green;">export()</span> 参数说明: <br>
+    </p>
+    <table>
+        <thead>
+        <tr>
+            <th align="left">参数</th>
+            <th align="left">说明</th>
+        </tr>
+        </thead>
+        <tbody><tr>
+            <td align="left">sourceName</td>
+            <td align="left">数据源名称</td>
+        </tr>
+        <tr>
+            <td align="left">key</td>
+            <td align="left">获取配置信息的查询条件</td>
+        </tr>
+        <tr>
+            <td align="left">isprintall</td>
+            <td align="left">是否打印所有页面</td>
+        </tr>
+        <tr>
+            <td align="left">url</td>
+            <td align="left">处理excel导出请求的controller地址: 后期会修改为使用前端统一配置（目前没有)</td>
+        </tr>
+        </tbody></table>
+    <div id="wmd-preview-section-footnotes" class="preview-content"></div></div></body></html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>树型控件</title>
+    <meta charset='utf-8'>
+    <link href='./marxico.css' rel='stylesheet'>
+</head>
+<body>
+  <div id='preview-contents' class='note-content'>
+    <div id="wmd-preview" class="preview-content"></div>
+    <div id="wmd-preview-section-27" class="wmd-preview-section preview-content"></div>
+    <div id="wmd-preview-section-114" class="wmd-preview-section preview-content">
+      <h1 id="树型控件">树型控件</h1>
+    </div>
+    <div id="wmd-preview-section-119" class="wmd-preview-section preview-content">
+      <h2 id="属性说明">属性说明</h2>
+      <table>
+        <thead>
+          <tr>
+            <th align="left">参数名</th>
+            <th align="left">含义</th>
+            <th align="left">是否必须</th>
+            <th align="left">说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td align="left">mode</td>
+            <td align="left">树型控件类型</td>
+            <td align="left">Y</td>
+            <td align="left">值:radio:单选树型控件，check:多选树型控件</td>
+          </tr>
+          <tr>
+            <td align="left">parent-prop</td>
+            <td align="left">父结点名称</td>
+            <td align="left">Y</td>
+            <td align="left">表示结点的父级字段名</td>
+          </tr>
+          <tr>
+            <td align="left">id-prop</td>
+            <td align="left">数据项的主键名称</td>
+            <td align="left">Y</td>
+            <td align="left">数据项的主键名称，与parent-prop字段对应</td>
+          </tr>
+          <tr>
+            <td align="left">display-express</td>
+            <td align="left">显示字段名称</td>
+            <td align="left">Y</td>
+            <td align="left">树结点显示的字段名称</td>
+          </tr>
+
+          <tr>
+            <td align="left">value-prop</td>
+            <td align="left">结点存储值字段</td>
+            <td align="left">N</td>
+            <td align="left">树结点保留的值对应的字段名称</td>
+          </tr>
+
+          <tr>
+            <td align="left">data-source-name</td>
+            <td align="left">数据源名称</td>
+            <td align="left">Y</td>
+            <td align="left">使用&lt;g-data-source&gt;标签配置的数据源名称</td>
+          </tr>
+          <tr>
+            <td align="left">async</td>
+            <td align="left">是否为异步数据源</td>
+            <td align="left">Y</td>
+            <td align="left">数据源是否为异步数据源,true:是;false:不是</td>
+          </tr>
+
+          <tr>
+            <td align="left">has-child-prop</td>
+            <td align="left">是否存在子结点字段名</td>
+            <td align="left">Y</td>
+            <td align="left">async=true时，数据项中说明是否存在子结点的字段名。</td>
+          </tr>
+
+          <tr>
+            <td align="left">is-expand-all</td>
+            <td align="left">是否全部展开</td>
+            <td align="left">N</td>
+            <td align="left">初始打开时，是否全部展开,true:全部展开,false:只展开根结点。默认:false</td>
+          </tr>
+
+          <tr>
+            <td align="left">show-select</td>
+            <td align="left">是否显示勾选框</td>
+            <td align="left">N</td>
+            <td align="left">可以是表达式，或者函数。如id>3,其中id为数据的字段名称；函数为controller中自定义的函数,参数为数据项。默认为显示</td>
+          </tr>
+
+          <tr>
+            <td align="left">allow-choose-parent</td>
+            <td align="left">是否可以勾选父结点</td>
+            <td align="left">N</td>
+            <td align="left">是否可以选择父结点,true:可选择树枝结点，false:不可选树枝结点（只能选择叶子结点）,默认为true</td>
+          </tr>
+
+          <tr>
+            <td align="left">allow-cascade-select</td>
+            <td align="left">是否可以级联勾选</td>
+            <td align="left">N</td>
+            <td align="left">true:选中树技结点时，自动选中所有子孙结点。取消选中时，自动取消所有子孙结点.只有mode=check,async=true时设置有效。默认为false</td>
+          </tr>
+
+
+          <tr>
+            <td align="left">ng-model</td>
+            <td align="left">双向绑定</td>
+            <td align="left">N</td>
+            <td align="left">双向绑定，绑定的是数据项，为数组类型。</td>
+          </tr>
+
+          <tr>
+            <td align="left">choose-items</td>
+            <td align="left">选中项</td>
+            <td align="left">N</td>
+            <td align="left">为选中的项，类型为数组类型</td>
+          </tr>
+
+
+          <tr>
+            <td align="left">current-row</td>
+            <td align="left">当前行</td>
+            <td align="left">N</td>
+            <td align="left">树型控件上的当前行数据(为数据源中的数据)</td>
+          </tr>
+
+
+          <tr>
+            <td align="left">width</td>
+            <td align="left">设置控件的宽度</td>
+            <td align="left">N</td>
+            <td align="left"></td>
+          </tr>
+
+          <tr>
+            <td align="left">height</td>
+            <td align="left">设置控件的高度</td>
+            <td align="left">N</td>
+            <td align="left"></td>
+          </tr>
+
+          <tr>
+            <td align="left">ng-show</td>
+            <td align="left">显示隐藏</td>
+            <td align="left">N</td>
+            <td align="left">值:true:显示，false:隐藏</td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+    <div id="wmd-preview-section-164" class="wmd-preview-section preview-content">
+      <h2 id="使用方式">使用方式</h2>
+    </div>
+    <div id="wmd-preview-section-230" class="wmd-preview-section preview-content">
+      <pre class="prettyprint hljs-dark"><code class="language-html hljs xml"> <span class="hljs-tag">&lt;<span class="hljs-title">g-data-tree</span>
+       <span class="hljs-attribute">mode</span>=<span class="hljs-value">"check"</span>
+       <span class="hljs-attribute">parent-prop</span>=<span class="hljs-value">"parent"</span>
+       <span class="hljs-attribute">id-prop</span>=<span class="hljs-value">"id"</span>
+       <span class="hljs-attribute">display-express</span>=<span class="hljs-value">"display"</span>
+       <span class="hljs-attribute">value-prop</span>=<span class="hljs-value">"value"</span>
+       <span class="hljs-attribute">data-source-name</span>=<span class="hljs-value">"asyncTreeSource"</span>
+       <span class="hljs-attribute">async</span>=<span class="hljs-value">"true"</span>
+       <span class="hljs-attribute">has-child-prop</span>=<span class="hljs-value">"hasChild"</span>
+       <span class="hljs-attribute">is-expand-all</span>=<span class="hljs-value">"true"</span>
+       <span class="hljs-attribute">show-select</span>=<span class="hljs-value">"id!=='4'&&id.parent!=='4'"</span>
+       <span class="hljs-attribute">allow-choose-parent</span>=<span class="hljs-value">"true"</span>
+       <span class="hljs-attribute">allow-cascade-select</span>=<span class="hljs-value">"true"</span>
+       <span class="hljs-attribute">ng-model</span>=<span class="hljs-value">"checkValues"</span>
+       <span class="hljs-attribute">choose-items</span>=<span class="hljs-value">"checkedItems"</span>
+       <span class="hljs-attribute">current-row</span>=<span class="hljs-value">"test.currentRow"</span>
+       <span class="hljs-attribute">width</span>=<span class="hljs-value">"500px"</span>
+       <span class="hljs-attribute">height</span>=<span class="hljs-value">"500px"</span>
+       <span class="hljs-attribute">ng-show</span>=<span class="hljs-value">"true"</span>
+       &gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-title">g-data-tree</span>&gt;</span></code></pre>
+    </div>
+    <div id="wmd-preview-section-footnotes" class="preview-content"></div>
+  </div>
+</body>
+</html>

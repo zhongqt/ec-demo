@@ -1,0 +1,40 @@
+<div class="divDialog" symbol="dialog" ng-show="displayProperty" ng-click="comboPort.portClick($event)">
+    <div class="area">
+        <span ng-repeat="area in comboArea" data-area-code="{{area.areaCode}}">{{area.areaName}}</span>
+    </div>
+
+    <table cellpadding="0" cellspacing="0">
+       
+        <tbody>
+        <tr ng-repeat="area in portData.area" data-row-index="{{$index}}" ng-class-even="\'old-area\'">
+            <th>{{area.provinceName}}</th>
+            <td width="{{tdWidth}}" ng-mouseover="comboPort.mouseOver($event)" ng-mouseout="comboPort.mouseOut($event)">
+                <span ng-repeat="port in area.ports" >
+                    <a href="javascript:void(0);" data-code="{{port.portCode}}" data-port-index="{{$index}}">{{port.portName}}</a>
+                </span>
+            </td><td></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div class="associate" ng-show="displayGridProperty">
+    <div class="table-wrapper">
+        <table cellpadding="0" cellspacing="0" style="{{tableCssStyle}}">
+            <thead>
+            <th ng-repeat="col in comboPort.grid.column" ng-if="col.type !== \'hidden\'">{{col.header}}</th>
+            </thead>
+            <tbody ng-click="comboPort.bodyClick($event)">
+            <tr ng-repeat="(rowIndex, row) in comboPort.grid.source" data-row-index="{{rowIndex}}" ng-class="{\'selected\': selectedId !== undefined && selectedId === comboPort.getSelectedId(row),\'hover\':hoverId!==undefined&&hoverId==={{rowIndex}}}">
+                <td g-port-grid-cell ng-repeat="(cellIndex, col) in comboPort.grid.column"
+                    ng-if="col.type !== \'hidden\'" data-cell-index="{{cellIndex}}"></td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="paginate">
+            <a class="paginate-button previous ng-class:{\'disabled\': page === 1};" ng-click="page === 1 || comboPort.goPage(page -1)">&lt;</a>
+            <span class="paginate-button">{{page}}</span>
+            <a class="paginate-button next ng-class:{\'disabled\': page === totalPage || totalPage <= 1};" ng-click="(page === totalPage || totalPage <= 1) || comboPort.goPage(page +1)">&gt;</a>
+            <span style="float: right; margin-right: 10px;">共 <span ng-bind="totalPage"></span> 页</span>
+        </div>
+    </div>
+</div><input type="hidden" name="{{submitName||\'hiddenPort\'}}" ng-value="submitValue"/>

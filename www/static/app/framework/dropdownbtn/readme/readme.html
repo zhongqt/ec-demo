@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>下拉按钮</title>
+    <meta charset='utf-8'>
+    <link href='./marxico.css' rel='stylesheet'>
+</head>
+<body>
+  <div id='preview-contents' class='note-content'>
+    <div id="wmd-preview" class="preview-content"></div>
+    <div id="wmd-preview-section-27" class="wmd-preview-section preview-content"></div>
+    <div id="wmd-preview-section-114" class="wmd-preview-section preview-content">
+      <h1 id="下拉按钮">下拉按钮</h1>
+    </div>
+    <div id="wmd-preview-section-119" class="wmd-preview-section preview-content">
+      <h2 id="属性说明">属性说明</h2>
+      <table>
+        <thead>
+          <tr>
+            <th align="left">参数名</th>
+            <th align="left">含义</th>
+            <th align="left">是否必须</th>
+            <th align="left">说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td align="left">disabled</td>
+            <td align="left">禁用按钮</td>
+            <td align="left">N</td>
+            <td align="left">只要有设置则禁用。如disabled="true"或者disabled="disabled"</td>
+          </tr>
+          <tr>
+            <td align="left">button-icon</td>
+            <td align="left">按钮图标</td>
+            <td align="left">N</td>
+            <td align="left">按钮图标class样式</td>
+          </tr>
+          <tr>
+            <td align="left">width</td>
+            <td align="left">设置控件宽度</td>
+            <td align="left">N</td>
+            <td align="left">只能在主指令中设置.单位有%:百分比;in：英寸;cm：厘米;mm：毫米;pt:磅数;pc:12点活字;ex:字母高度的一半;em:字体高度;px：像素(默认)</td>
+          </tr>
+          <tr>
+            <td align="left">is-button</td>
+            <td align="left">是否为按钮分裂下拉按钮</td>
+            <td align="left">N</td>
+            <td align="left">是否为button分裂下拉按钮;true(默认：按钮);false:a标签按钮</td>
+          </tr>
+
+          <tr>
+            <td align="left">display</td>
+            <td align="left">菜单按钮上显示文字</td>
+            <td align="left">Y</td>
+            <td align="left"></td>
+          </tr>
+          <tr>
+            <td align="left">click-event</td>
+            <td align="left">配置点击事件</td>
+            <td align="left">N</td>
+            <td align="left">当href-prop和click-event同时配置时，只有click-event函数返回true时，才会跳转到href-prop的页面。</td>
+          </tr>
+          <tr>
+            <td align="left">href-prop</td>
+            <td align="left">配置的超链接地址</td>
+            <td align="left">N</td>
+            <td align="left"></td>
+          </tr>
+          <tr>
+            <td align="left">ng-show</td>
+            <td align="left">配置控件的显示或隐藏</td>
+            <td align="left">N</td>
+            <td align="left"></td>
+          </tr>
+          <tr>
+            <td align="left">role</td>
+            <td align="left">是否为分隔线</td>
+            <td align="left">N</td>
+            <td align="left">role="separator"为分隔线</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div id="wmd-preview-section-164" class="wmd-preview-section preview-content">
+      <h2 id="使用方式">使用方式</h2>
+    </div>
+    <div id="wmd-preview-section-230" class="wmd-preview-section preview-content">
+      <pre class="prettyprint hljs-dark"><code class="language-html hljs xml"> <span class="hljs-tag">&lt;<span class="hljs-title">g-dropdown-btn</span>
+       <span class="hljs-attribute">g-width</span>=<span class="hljs-value">"130px"</span>
+       <span class="hljs-attribute">display</span>=<span class="hljs-value">"确定提交"</span>
+       <span class="hljs-attribute">click-event</span>=<span class="hljs-value">"clickMajorBut('确定按钮')"</span>
+       <span class="hljs-attribute">href-prop</span>=<span class="hljs-value">"http://www.baidu.com"</span>
+       <span class="hljs-attribute">ng-show</span>=<span class="hljs-value">"true"</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-title">g-dropdown-item</span>
+           <span class="hljs-attribute">disabled</span>=<span class="hljs-value">"disabled"</span>
+           <span class="hljs-attribute">g-width</span>=<span class="hljs-value">"130px"</span>
+           <span class="hljs-attribute">display</span>=<span class="hljs-value">"确定提交"</span>
+           <span class="hljs-attribute">click-event</span>=<span class="hljs-value">"clickMajorBut('确定按钮')"</span>
+           <span class="hljs-attribute">href-prop</span>=<span class="hljs-value">"http://www.baidu.com"</span>
+           <span class="hljs-attribute">ng-show</span>=<span class="hljs-value">"true"</span>&gt;</span>
+       <span class="hljs-tag">&lt;/<span class="hljs-title">g-dropdown-item</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-title">g-dropdown-btn</span>&gt;</span></code></pre>
+    </div>
+    <div id="wmd-preview-section-footnotes" class="preview-content"></div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,375 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>利用原点坐标实现拖动打印设计</title>
+    <link href="/static/css/index.css" rel="stylesheet" type="text/css">
+    <link href="/static/css/controls.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="iconfont.css">
+    <style>
+        .grid-col-1 {
+            width: 50px;
+        }
+        .grid-col-2 {
+            width: 150px;
+        }
+    </style>
+
+    <script>
+        var ctx = '';
+        var basePath = '/gillion-web';
+        var locale = 'zh-cn'
+    </script>
+    <script src="../../../../bower_components/angular/angular.min.js"></script>
+
+    <script>
+        var LODOP; //声明为全局变量
+        function CreatePage() {
+            var LODOP2,LODOP_EM2;
+            LODOP2 = document.getElementById("LODOP2");
+            LODOP_EM2 = document.getElementById("LODOP_EM2");
+            LODOP = getLodop(LODOP2, LODOP_EM2);
+            LODOP.PRINT_INITA(0, 0, 760, 321, "打印控件Lodop功能_在线编辑获得程序代码");
+        };
+        function DisplayDesign() {
+            CreatePage();
+            LODOP.SET_SHOW_MODE("DESIGN_IN_BROWSE", 1);
+            LODOP.SET_SHOW_MODE("SETUP_ENABLESS", "11111111000000");//隐藏关闭(叉)按钮
+            LODOP.SET_SHOW_MODE("HIDE_GROUND_LOCK", true);//隐藏纸钉按钮
+            LODOP.PRINT_DESIGN();
+        };
+        angular.module('PrintPageModule', []).controller('printPageController', ['$scope','$http','$timeout', function($scope,$http,$timeout) {
+            var getParam,init,getDrop,printCodeData;
+            $scope.printData=[];
+            printCodeData = "";
+            $scope.$watch('$viewContentLoaded',function(){
+                var dataParam,codeParam,printDataUrl,printCodeUrl,printCodeSaveUrl,
+                        requestArg,requestParams,savePrintData;
+                dataParam = getParam("dataParam");
+                codeParam = getParam("codeParam");
+                printDataUrl = getParam("printData");
+                printCodeUrl = getParam("printCode");
+                printCodeSaveUrl = getParam("printCodeSave");
+                init();
+                if(dataParam && dataParam.length>0){
+                    requestArg = [printDataUrl];
+                    requestParams = {
+                        "dataParam":dataParam
+                    };
+                    requestParams.nowTime = new Date().getTime();
+                    requestArg.push({
+                        "params": requestParams
+                    });
+                    $http.get.apply(window, requestArg).success(function(result) {
+                        var responseData,len,ele;
+                        responseData = result.data;
+                        $scope.printData = [];
+                        for(var i=0; i<responseData.length; i++){
+                            $scope.printData.push(responseData[i]);
+                        }
+                        len = $scope.printData.length;
+                        if(len<15){
+                            for(var i=len; i<15; i++){
+                                ele = {};
+                                ele.name="";
+                                ele.value="";
+                                $scope.printData.push(ele);
+                            }
+                        }
+                    });
+                }
+
+                if(codeParam && codeParam.length>0){
+                    requestArg = [printCodeUrl];
+                    requestParams = {
+                        "id":codeParam
+                    };
+                    requestParams.nowTime = new Date().getTime();
+                    requestArg.push({
+                        "params": requestParams
+                    });
+                    $http.get.apply(window, requestArg).success(function(result) {
+                        if(typeof result === 'string'){
+                            printCodeData=result;
+                            eval(printCodeData);
+                            $timeout(function(){
+                                setInterval(function(){
+                                    $scope.$apply(savePrintData);
+                                },1000);
+                            },1000);
+                        }else if(typeof result === "object"){
+                            printCodeData=result.data;
+                            eval(printCodeData);
+                            $timeout(function(){
+                                setInterval(function(){
+                                    $scope.$apply(savePrintData);
+                                },1000);
+                            },1000);
+                        }
+                    }).error(function(){
+
+                    });
+                }else{
+                    $timeout(function(){
+                        setInterval(function(){
+                            $scope.$apply(savePrintData);
+                        },1000);
+                    },1000);
+                }
+
+                savePrintData = function(){
+                    var postData,printCode,printCodeArray,codeData;
+                    printCode = LODOP.GET_VALUE("ProgramCodes",0);
+                    printCodeArray = printCode.split("\r\n");
+                    codeData = "";
+                    for(var i=1;i<printCodeArray.length;i++){
+                        codeData = codeData + printCodeArray[i];
+                    }
+                    if(printCodeData!==codeData){
+                        postData = {
+                            "id":codeParam,
+                            "printCode":codeData
+                        };
+                        $http.post(printCodeSaveUrl,postData).success(function(result) {
+                            if(!codeParam){
+                                codeParam = result;
+                            }
+                            printCodeData = codeData;
+                        });
+                    }
+                }
+
+            });
+
+            init = function(){
+                var isIE,param,LODOP2,embed;
+                isIE = (navigator.userAgent.indexOf('MSIE')>=0) || (navigator.userAgent.indexOf('Trident')>=0);
+                LODOP2 = document.createElement("object");
+                LODOP2.setAttribute("id","LODOP2");
+                LODOP2.setAttribute("classid","clsid:2105C259-1E0C-4534-8141-A753534CB4CA");
+                LODOP2.setAttribute("width","100%");
+                if(isIE){
+                    LODOP2.setAttribute("height",document.getElementById("offsetLeft").offsetHeight-4);
+                }else{
+                    LODOP2.setAttribute("height","100%");
+                }
+                param = document.createElement("param");
+                param.setAttribute("name","Caption");
+                param.setAttribute("value","内嵌显示区域");
+                LODOP2.appendChild(param);
+                param = document.createElement("param");
+                param.setAttribute("name","Border");
+                param.setAttribute("value","1");
+                LODOP2.appendChild(param);
+                param = document.createElement("param");
+                param.setAttribute("name","Color");
+                param.setAttribute("value","#C0C0C0");
+                LODOP2.appendChild(param);
+                param=null;
+                embed =document.createElement("embed");
+                embed.setAttribute("id","LODOP_EM2");
+                embed.setAttribute("TYPE","application/x-print-lodop");
+                embed.setAttribute("width","100%");
+                embed.setAttribute("height","100%");
+                embed.setAttribute("PLUGINSPAGE","install_lodop.exe");
+                embed.setAttribute("wmode","opaque");
+                LODOP2.appendChild(embed);
+                embed=null;
+                document.getElementById("pnl").style.height = "100%";
+                document.getElementById("pnl").appendChild(LODOP2);
+                window.setTimeout(function(){
+                    DisplayDesign();
+                },0);
+            }
+
+            getParam = function(name){
+                var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+                var r = window.location.search.substr(1).match(reg);
+                if(r!=null){
+                    return  decodeURIComponent(r[2]);
+                }
+                return null;
+                /*
+                var hashParamStr,hashParams,param;
+                hashParamStr = window.location.hash;
+                if(hashParamStr && hashParamStr.length >0){
+                    hashParamStr = hashParamStr.substr(1,hashParamStr.length);
+                    hashParams = hashParamStr.split("&");
+                    for(var i=0;i<hashParams.length;i++){
+                        if((hashParams[i].substr(0,paramName.length+1))===(paramName+"=")){
+                            param = hashParams[i].substr(paramName.length+1);
+                        }
+                    }
+                }
+                return param;
+                */
+            }
+
+            getDrop = function(element) {
+                var pos,drop,design,os_lodop;
+                pos =  element.getBoundingClientRect();
+                drop = {
+                    x: pos.left,
+                    y: pos.top,
+                    text: element.innerHTML,
+                    ttype:element.getAttribute("ttype")
+                };
+                design = { x: 0, y: 0 };
+                try {
+                    design.x = LODOP.GET_VALUE('DesignInterfaceBaseX', 0);
+                    design.y = LODOP.GET_VALUE('DesignInterfaceBaseY', 0);
+                    design.x = design.x == '' ? 0 : design.x;
+                    design.y = design.y == '' ? 0 : design.y;
+                } catch (e) {
+                    design = { x: 0, y: 0 };
+                }
+                os_lodop =LODOP.getBoundingClientRect();
+                drop.x = drop.x - os_lodop.left - design.x;
+                drop.y = drop.y - os_lodop.top - design.y;
+                return drop;
+            }
+
+            var zIndex = 6;
+            //拖动事件
+            $scope.mousedown = function(event){
+                var disX = 0,disY = 0,pos,style,target;
+                event = event || window.event;
+                target = event.target;
+                pos =  target.getBoundingClientRect();
+                disX = event.clientX - pos.left;
+                disY = event.clientY - pos.top;
+                var oTemp = target.cloneNode(true);
+                style = oTemp.style;
+                style.zIndex=zIndex+1;
+                zIndex = zIndex + 1;
+                style.position="absolute";
+                style.left = pos.left + "px";
+                style.top = pos.top + "px";
+                style.border="1px solid black";
+                style.cursor='move';
+                target.style.cursor='move';
+                style.backgroundColor='white';
+                target.parentNode.insertBefore(oTemp,target);
+                document.onmousemove = function(event) {
+                    var event = event || window.event;
+                    var iL = event.clientX - disX;
+                    var iT = event.clientY - disY;
+                    var maxL = document.documentElement.clientWidth - pos.left;
+                    var maxT = document.documentElement.clientHeight - pos.top;
+                    iL <= 0 && (iL = 0);
+                    iT <= 0 && (iT = 0);
+                    iL >= maxL && (iL = maxL);
+                    iT >= maxT && (iT = maxT);
+                    style.zIndex = zIndex++;
+                    style.left = iL + "px";
+                    style.top = iT + "px";
+                    event.preventDefault();
+                    return false;
+                };
+                document.onmouseup = function() {
+                    var drop,pos;
+                    pos =  oTemp.getBoundingClientRect();
+                    document.onmousemove = null;
+                    document.onmouseup = null;
+                    target.style.zIndex = oTemp.style.zIndex;
+                    target.releaseCapture && target.releaseCapture();
+                    drop = getDrop(oTemp);
+                    drop.x -= 1;
+                    drop.y -= 1;
+                    drop.text = target.innerHTML;
+                    if (!(drop.x > 0 && drop.y > 0)) {
+                        oTemp.parentNode.removeChild(oTemp);
+                        return;
+                    }
+                    var text = target.innerHTML;
+                    var param = target.getAttribute('_param');
+                    if(drop.ttype=="htm") {
+                        LODOP.ADD_PRINT_HTM(drop.y, drop.x,175,109,drop.innerHTML);
+                    } else {
+                        LODOP.ADD_PRINT_TEXTA(param, drop.y, drop.x, 100, 20, drop.text);
+                        LODOP.SET_PRINT_STYLEA(0, "ContentVName", param);
+                    }
+                    oTemp.parentNode.removeChild(oTemp);
+                };
+
+            }
+        }]);
+    </script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script type="text/javascript" src="LodopFuncs.js"></script>
+</head>
+<body ng-app="PrintPageModule" ng-controller="printPageController">
+<div  style="overflow:hidden;margin:10px 10px;height:500px;">
+    <table  style="width:100%;height:70%;" cellpadding="0" cellspacing="0">
+        <tr>
+            <td id="offsetLeft" style="white-space:nowrap;padding:0px 5px;" valign="top">
+                <div class="grid" style="height:500px;border:2px solid #C3EEFF;padding-top: 0px;">
+                    <div style="border-bottom:1px dashed grey;padding-left:13px;">
+                        <table>
+                            <tr>
+                                <td valign="top">
+                                    <div style="width:80px;height:70px;">
+                                        <i class="icon iconfont" style="font-size: 60px;line-height:65px;opacity:0.3;">&#xe66f;</i>
+                                    </div>
+                                </td>
+                                <td valign="top">
+                                    <div style="width:95px;height:30px; margin-top:6px;">
+                                        <span style="font-size:21px;font-family: '微软雅黑';font-weight:500;letter-spacing: 2px;">字段列表</span>
+                                    </div>
+                                    <div style="font-size:14px">Printer</div>
+                                </td>
+                                <td valign="top">
+                                    <div style="margin-top:8px;">
+                                        <i class="icon iconfont" style="font-size:19px;font-weight:bold;color: #11CCFF;">&#xe623;</i>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <table style="margin:5px 5px;">
+                        <tr>
+                            <td>
+                                <div>
+                                    <table class="table-head">
+                                        <tbody><tr>
+                                            <th class="grid-col-1">序号</th>
+                                            <th class="grid-col-2">字段名</th>
+                                            <th class="table-scroll-space"></th>
+                                        </tr>
+                                        </tbody></table>
+                                </div>
+                                <div class="grid-body"  unselectable="on" style="-moz-user-select:none;height:370px;" onselectstart="return false">
+                                    <table class="table-body" id="table-body">
+                                        <tbody>
+                                        <tr ng-if="$index%2===0 && item.value!==''"  align="center"ng-repeat-start="item in printData">
+                                            <td class="grid-col-1">{{$index+1}}</td>
+                                            <td class="grid-col-2 item"  ng-mousedown="mousedown($event)"  column-name="{{item.name}}">{{item.value}}</td>
+                                        </tr>
+                                        <tr ng-if="$index%2===0 && item.value===''"  align="center">
+                                            <td class="grid-col-1">{{$index+1}}</td>
+                                            <td class="grid-col-2 item" column-name="{{item.name}}">{{item.value}}</td>
+                                        </tr>
+                                        <tr  ng-if="$index%2!==0 && item.value!==''"  class="table-body-tr-even" align="center">
+                                            <td class="grid-col-1">{{$index+1}}</td>
+                                            <td class="grid-col-2 item" ng-mousedown="mousedown($event)" column-name="{{item.name}}">{{item.value}}</td>
+                                        </tr>
+                                        <tr  ng-if="$index%2!==0 && item.value===''" class="table-body-tr-even"  align="center" ng-repeat-end>
+                                            <td class="grid-col-1">{{$index+1}}</td>
+                                            <td class="grid-col-2 item" column-name="{{item.name}}">{{item.value}}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+            <td style="width:100%;height:100%; white-space:nowrap" valign="top">
+                <div id="pnl" style="width:100%;padding-bottom:4px;"></div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+</body>
+</html>
