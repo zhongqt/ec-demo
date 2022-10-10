@@ -56,7 +56,7 @@ define([
               $scope.fileInfos= fileInfos;
           });
           $scope.myBeforeUpload=function (fileInfo) {
-              alert("确认上传"+fileInfo.name+"吗？");
+              alert("确认 上传"+fileInfo.name+"吗？");
 
           }
           $scope.myBeforeDelete=function (fileInfo){
